@@ -1,0 +1,29 @@
+# Secrets -- never commit
+ENV.txt
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Data: the historical research dataset (years of tick/candle data across
+# many symbols, Tasks 7-9) and all live run-local output are large and/or
+# regenerated -- neither belongs in this repo. Only the tiny dedupe state
+# file the GitHub Actions workflow reads/writes is tracked.
+data/*
+!data/live/
+data/live/*
+!data/live/notified_opportunities.json
+
+# Generated reports/notebooks output (large, regenerated)
+reports/
+notebooks/*.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

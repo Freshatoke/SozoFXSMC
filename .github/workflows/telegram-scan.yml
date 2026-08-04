@@ -1,0 +1,72 @@
+# Task 11.1 Phase 3 — TEMPORARY scheduled scan-and-notify.
+#
+# THIS IS A STOPGAP, NOT THE PLATFORM'S PERMANENT HOME. A GitHub Actions
+# runner is a fresh, disposable VM on every trigger -- there is no
+# persisted LiveOrchestrator, no persisted PaperBroker, no continuous
+# process. This workflow can only do what a stateless 5-minute scan can
+# honestly do: fetch recent candles, rebuild market context from scratch
+# within the lookback window, run S3/S4, rank via IOS, and Telegram-alert
+# on newly approved opportunities -- deduplicated via a state file
+# committed back to the repo (see scripts/telegram_scan_and_notify.py's
+# own docstring for why that file, not in-memory state, is what actually
+# prevents duplicate alerts here).
+#
+# When the VPS is ready: replace this workflow with a systemd/supervisor
+# service running `scripts/run_forward_paper_trading.py` continuously.
+# The Telegram notification code (src/live/notifications.py) is reused
+# UNCHANGED in that migration -- only the execution environment changes.
+
+name: Telegram Scan (Temporary)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}   # allows a manual "Run workflow" click for testing
+
+concurrency:
+  group: telegram-scan
+  cancel-in-progress: false   # never cancel a run mid-scan; let it finish and commit its state
+
+permissions:
+  contents: write   # needed to commit the updated dedupe state file back to the repo
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4   # must finish comfortably inside the 5-minute cadence
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scan and notify
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python scripts/telegram_scan_and_notify.py \
+            --symbols EURUSD,GBPUSD \
+            --lookback-hours 6 \
+            --state-file data/live/notified_opportunities.json
+
+      - name: Commit updated dedupe state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/live/notified_opportunities.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update notified-opportunities dedupe state [skip ci]"
+            git push
+          else
+            echo "No state change to commit."
+          fi
