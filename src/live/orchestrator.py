@@ -37,6 +37,7 @@ from src.live.decision_stream import LiveDecisionEngine
 from src.live.broker import PaperBroker
 from src.live.event_log import EventLogger
 from src.live.dashboard import build_snapshot, write_dashboard
+from src.live.journal import DailyActivityRecorder
 from src.live.notifications import (
     NotificationRouter, ConsoleNotifier, FileNotifier, TelegramNotifier, DiscordNotifier, EmailNotifier,
     format_trade_alert_markdown,
@@ -85,6 +86,12 @@ class LiveOrchestrator:
             TelegramNotifier(), DiscordNotifier(), EmailNotifier(),
         ])
         self.cycles_run = 0
+        # Task 11.2: every scan/decision/trade this orchestrator produces is
+        # also recorded for the daily intelligence report -- same recorder
+        # class the GitHub Actions scan script uses, so a continuously
+        # running deployment's reports include real paper-broker metrics
+        # (win rate/expectancy/profit factor) the scan-only deployment can't.
+        self.journal_recorder = DailyActivityRecorder(activity_dir=self.data_dir / "journal" / "activity")
         # Opportunity_id -> Opportunity, for enriching broker events (which
         # only carry symbol/price/lots) with strategy_id/IOS/ITQS/stop/target
         # when building the Task 11.1 Telegram message shape. Bounded --
@@ -105,6 +112,10 @@ class LiveOrchestrator:
             )
             self.decision_engine.close_position(detail["position_id"], total_pnl)
             reason = detail.get("reason", "")
+            self.journal_recorder.record_trade_closed(
+                detail["position_id"], detail.get("symbol", opp.symbol if opp else None),
+                opp.strategy_id if opp else "", total_pnl, reason,
+            )
             label = ALERT_STOP_LOSS_HIT if reason == "StopLoss" else (ALERT_TAKE_PROFIT_HIT if reason.startswith("TakeProfit") else ALERT_TRADE_CLOSED)
             self.notifier.notify(label, format_trade_alert_markdown(
                 label, symbol=detail.get("symbol", opp.symbol if opp else None),
@@ -125,6 +136,9 @@ class LiveOrchestrator:
                     reason=f"Partial exit {detail.get('lots')} lots @ {detail.get('exit_price')}", timestamp=detail.get("timestamp"),
                 ))
         elif event_type == "paper_trade_opened":
+            self.journal_recorder.record_trade_opened(
+                detail["position_id"], detail["symbol"], opp.strategy_id if opp else "", detail["direction"],
+            )
             self.notifier.notify(ALERT_TRADE_OPENED, format_trade_alert_markdown(
                 ALERT_TRADE_OPENED, symbol=detail["symbol"], strategy_id=opp.strategy_id if opp else None,
                 direction=detail["direction"], entry=detail["entry_price"], stop_loss=detail.get("stop_loss"),
@@ -135,6 +149,7 @@ class LiveOrchestrator:
     def _check_data_feed_health(self) -> None:
         hb = self.feed_manager.provider.heartbeat()
         if not hb.connected or hb.consecutive_failures > 0:
+            self.journal_recorder.record_feed_error(hb.provider_name, hb.last_error or "disconnected")
             self.notifier.notify(ALERT_DATA_FEED_DISCONNECTED,
                                   f"{hb.provider_name}: connected={hb.connected}, consecutive_failures={hb.consecutive_failures}, last_error={hb.last_error}",
                                   level="warning")
@@ -173,8 +188,11 @@ class LiveOrchestrator:
                             timestamp=opp.timestamp,
                         ))
                 all_new_opportunities.extend(opps)
+            self.journal_recorder.record_scan(symbol, len(batch.candles))
 
         decisions = self.decision_engine.on_new_opportunities(all_new_opportunities)
+        for d in decisions:
+            self.journal_recorder.record_decision(d)
         for d in decisions:
             if d.verdict != "EXECUTE":
                 continue

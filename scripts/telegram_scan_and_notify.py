@@ -44,6 +44,7 @@ from src.live.strategy_runner import LiveStrategyRunner
 from src.live.decision_stream import LiveDecisionEngine
 from src.decision_engine.risk_layer import AccountState
 from src.live.notifications import TelegramNotifier, NotConfiguredError, format_trade_alert_markdown
+from src.live.journal import DailyActivityRecorder
 
 ALERT_APPROVED_OPPORTUNITY = "Approved Trade Opportunity"
 STATE_RETENTION_DAYS = 14   # dedupe entries older than this are pruned (state file must not grow forever)
@@ -70,6 +71,8 @@ def main():
     parser.add_argument("--symbols", default="EURUSD,GBPUSD")
     parser.add_argument("--lookback-hours", type=int, default=6)
     parser.add_argument("--state-file", default="data/live/notified_opportunities.json")
+    parser.add_argument("--activity-dir", default="data/live/journal/activity",
+                         help="Task 11.2: where per-scan activity is recorded for the daily intelligence report.")
     args = parser.parse_args()
 
     symbols = [s.strip() for s in args.symbols.split(",") if s.strip()]
@@ -79,6 +82,7 @@ def main():
 
     notifier = TelegramNotifier()
     provider = DukascopyLiveProvider(lookback_hours=args.lookback_hours, timeout=20)
+    recorder = DailyActivityRecorder(activity_dir=args.activity_dir)
 
     account = AccountState()
     decision_engine = LiveDecisionEngine(account=account)
@@ -92,15 +96,19 @@ def main():
             batch = provider.poll(symbol, "M1", since=None)
         except ProviderConnectionError as exc:
             print(f"[{symbol}] provider error: {exc}", file=sys.stderr)
+            recorder.record_feed_error(symbol, str(exc))
             continue
 
         for row in batch.candles.itertuples(index=False):
             ctx.ingest_m1_candle(row.timestamp, row.open, row.high, row.low, row.close)
             all_new_opportunities.extend(runner.on_candle_closed())
 
+        recorder.record_scan(symbol, len(batch.candles))
         print(f"[{symbol}] candles={len(batch.candles)} opportunities={len(all_new_opportunities)}")
 
     decisions = decision_engine.on_new_opportunities(all_new_opportunities)
+    for d in decisions:
+        recorder.record_decision(d)
     approved = [d for d in decisions if d.verdict == "EXECUTE"]
     print(f"Decisions: {len(decisions)} total, {len(approved)} approved.")
 

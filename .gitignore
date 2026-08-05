@@ -19,9 +19,24 @@ data/*
 !data/live/
 data/live/*
 !data/live/notified_opportunities.json
+# Task 11.2: the AI Trading Journal's activity log, persisted daily
+# reports, and learning log ARE meant to accumulate in the repo -- both
+# GitHub Actions workflows (telegram-scan.yml, daily-report.yml) commit
+# to these paths, and historical comparison/drift detection need them
+# to survive across runs (each run is a fresh, disposable VM).
+!data/live/journal/
+data/live/journal/*
+!data/live/journal/activity/
+data/live/journal/activity/*
+!data/live/journal/activity/*.jsonl
+!data/live/journal/reports/
+data/live/journal/reports/*
+!data/live/journal/reports/*.json
+!data/live/journal/learning_log.jsonl
 
-# Generated reports/notebooks output (large, regenerated)
-reports/
+# Generated reports/notebooks output (large, regenerated) -- anchored to
+# repo root so it never shadows data/live/journal/reports/ above.
+/reports/
 notebooks/*.ipynb_checkpoints/
 
 # OS

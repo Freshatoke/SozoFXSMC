@@ -1,0 +1,58 @@
+# Task 11.2 — Daily Intelligence Report.
+#
+# Fires once per day at 22:00 Nigerian time (Africa/Lagos = UTC+1, no
+# DST, so this is a fixed 21:00 UTC year-round). Reads the day's activity
+# accumulated by telegram-scan.yml's many 5-minute runs
+# (data/live/journal/activity/<date>.jsonl, committed back to the repo by
+# that workflow throughout the day), computes the report, sends it to
+# Telegram, and commits the persisted report + updated learning log back
+# to the repo so tomorrow's report can do historical comparison / drift
+# detection against it.
+
+name: Daily Intelligence Report
+
+on:
+  schedule:
+    - cron: "0 21 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate and send daily report
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TZ: Africa/Lagos
+        run: python scripts/generate_daily_report.py
+
+      - name: Commit updated journal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/live/journal/reports data/live/journal/learning_log.jsonl docs/journal/LEARNING_LOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: daily intelligence report + learning log update [skip ci]"
+            git push
+          else
+            echo "No journal change to commit."
+          fi
