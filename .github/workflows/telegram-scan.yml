@@ -33,7 +33,15 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 4   # must finish comfortably inside the 5-minute cadence
+    # Task 11.3: 4 minutes was sized for 2 symbols; scanning 7 symbols x a
+    # multi-hour Dukascopy lookback window (one HTTP download per hour per
+    # symbol) genuinely takes longer. `concurrency: cancel-in-progress:
+    # false` above means a run finishing after 5 minutes just delays the
+    # next scheduled trigger rather than corrupting anything, so widening
+    # this is safe -- what's NOT safe is the job being killed by a timeout
+    # mid-script, which skips the commit step entirely and silently loses
+    # that run's activity (this happened once during Task 11.3 testing).
+    timeout-minutes: 8
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -57,7 +65,7 @@ jobs:
         run: |
           python scripts/telegram_scan_and_notify.py \
             --symbols EURUSD,GBPUSD,USDJPY,AUDUSD,USDCHF,USDCAD,NZDUSD \
-            --lookback-hours 6 \
+            --lookback-hours 2 \
             --state-file data/live/notified_opportunities.json
 
       # Task 11.3 Phase 1/9: this step is what makes the platform's
