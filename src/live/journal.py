@@ -39,6 +39,8 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
+from src.live.notifications import escape_markdown
+
 NIGERIA_TZ = ZoneInfo("Africa/Lagos")   # UTC+1 fixed, no DST
 MIN_DAYS_FOR_HISTORICAL_COMPARISON = 3
 MIN_DAYS_FOR_DRIFT_BASELINE = 7
@@ -693,7 +695,7 @@ def render_report_markdown(report: dict, observations: list, historical: dict, d
     lines.append(f"Best strategy: `{report['best_strategy']}` | Best symbol: `{report['best_symbol']}`")
     lines.append(f"Most common rejection reason: `{report['most_common_rejection_reason']}`")
 
-    lines += ["", "*Observations*"] + [f"- {o}" for o in observations]
+    lines += ["", "*Observations*"] + [f"- {escape_markdown(o)}" for o in observations]
 
     lines += ["", "*Historical Comparison*"]
     if isinstance(historical["previous_week"], dict):
@@ -707,10 +709,10 @@ def render_report_markdown(report: dict, observations: list, historical: dict, d
     else:
         lines.append(historical["previous_month"])
     for dev in historical["notable_deviations"]:
-        lines.append(f"- {dev}")
+        lines.append(f"- {escape_markdown(dev)}")
 
-    lines += ["", "*Drift Detection*"] + [f"- {a['detail']}" for a in drift]
-    lines += ["", "*Recommendations*"] + [f"- {r}" for r in recommendations]
+    lines += ["", "*Drift Detection*"] + [f"- {escape_markdown(a['detail'])}" for a in drift]
+    lines += ["", "*Recommendations*"] + [f"- {escape_markdown(r)}" for r in recommendations]
     lines += ["", f"_Generated {report['generated_at']}_"]
     return "\n".join(lines)
 
@@ -790,7 +792,7 @@ def render_daily_report_v2_markdown(report: dict, observations: list, historical
 
     L.append("")
     L.append("*AI Operational Summary*")
-    L += [f"- {o}" for o in observations]
+    L += [f"- {escape_markdown(o)}" for o in observations]
 
     L.append("")
     L.append("*Historical Comparison*")
@@ -810,17 +812,17 @@ def render_daily_report_v2_markdown(report: dict, observations: list, historical
     else:
         L.append(historical["previous_month"])
     if historical["notable_deviations"]:
-        L += [f"- {d}" for d in historical["notable_deviations"]]
+        L += [f"- {escape_markdown(d)}" for d in historical["notable_deviations"]]
     else:
         L.append("No meaningful deviations from historical activity.")
 
     L.append("")
     L.append("*Drift Detection*")
-    L += [f"- {a['detail']}" for a in drift]
+    L += [f"- {escape_markdown(a['detail'])}" for a in drift]
 
     L.append("")
     L.append("*Operational Recommendations*")
-    L += [f"- {r}" for r in recommendations]
+    L += [f"- {escape_markdown(r)}" for r in recommendations]
 
     L.append("")
     L.append(f"_Generated {report['generated_at']}_")

@@ -61,13 +61,21 @@ class FileNotifier:
         return True
 
 
-def _md_escape(text: str) -> str:
+def escape_markdown(text: str) -> str:
     """Escapes Telegram legacy-Markdown's special characters in free-text
-    fields (reasons, error messages) -- structured fields we build
-    ourselves (symbol, strategy_id, prices) never contain these, but a
-    `reasons_against` string built from allocation-limit messages can
-    contain '(' ')' etc. which the raw Markdown parser would choke on."""
+    fields -- structured fields we build ourselves (symbol, strategy_id,
+    prices) never contain these, but any free-text sentence (rejection
+    reasons, AI observations, doc filenames like
+    `docs/GITHUB_ACTIONS_SETUP_GUIDE.md`) can contain an ODD number of
+    `_`/`*` characters, which Telegram's legacy Markdown parser rejects
+    outright with `HTTP 400: can't parse entities` -- it doesn't degrade
+    gracefully, the whole send fails. Every free-text string handed to
+    Telegram must go through this first. Public (not `_`-prefixed)
+    because `src.live.journal`'s report renderers need it too."""
     return str(text).replace("_", "\\_").replace("*", "\\*").replace("[", "\\[").replace("`", "\\`")
+
+
+_md_escape = escape_markdown   # internal alias, kept for this module's own call sites below
 
 
 def format_trade_alert_markdown(event_label: str, symbol: str = None, strategy_id: str = None,
