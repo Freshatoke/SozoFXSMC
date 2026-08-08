@@ -53,19 +53,33 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
         run: |
           python scripts/telegram_scan_and_notify.py \
-            --symbols EURUSD,GBPUSD \
+            --symbols EURUSD,GBPUSD,USDJPY,AUDUSD,USDCHF,USDCAD,NZDUSD \
             --lookback-hours 6 \
             --state-file data/live/notified_opportunities.json
 
-      - name: Commit updated dedupe state
+      # Task 11.3 Phase 1/9: this step is what makes the platform's
+      # operational history survive a fresh, disposable runner -- WITHOUT
+      # committing data/live/journal/activity/ (not just the dedupe state
+      # file), every scan's candles/signals/decisions vanish the instant
+      # this job ends, which is exactly why the Daily Intelligence Report
+      # was previously showing "Markets scanned: none" despite scans
+      # succeeding: the report script reads this path from a fresh
+      # checkout, and nothing had ever committed it there.
+      - name: Commit updated operational state
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/live/notified_opportunities.json
+          git add data/live/notified_opportunities.json data/live/journal/activity/
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update notified-opportunities dedupe state [skip ci]"
+            git commit -m "chore: scan ${GITHUB_RUN_ID} operational state update [skip ci]"
+            # Another concurrent workflow (daily-report.yml, or a rare
+            # overlapping run) may have pushed since checkout -- rebase
+            # onto the latest remote state before pushing rather than
+            # letting a transient conflict drop this scan's data.
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           else
             echo "No state change to commit."

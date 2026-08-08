@@ -58,10 +58,23 @@ class DailyActivityRecorder:
     activity file. Safe to instantiate fresh in a short-lived process
     (a GitHub Actions run) -- each call opens, appends, and closes the
     file, since a 5-minute scan script has no long-lived file handle to
-    keep open across the many separate processes that make up one day."""
+    keep open across the many separate processes that make up one day.
 
-    def __init__(self, activity_dir: str | Path = "data/live/journal/activity"):
+    Task 11.3: every record is stamped with `run_id` -- `GITHUB_RUN_ID`
+    when running as a GitHub Actions job (unique per workflow execution,
+    stable across the job's steps), or a locally-generated id otherwise
+    (e.g. a continuously running LiveOrchestrator, where "run" means
+    "this orchestrator process"). This is what lets the operational
+    journal (`render_operational_journal`) and the aggregation engine
+    group scattered event records back into the "one execution produced
+    these events" structure Phase 1/2 need, without a database -- the
+    JSONL file plus this one shared key is the whole mechanism."""
+
+    def __init__(self, activity_dir: str | Path = "data/live/journal/activity", run_id: Optional[str] = None):
         self.activity_dir = Path(activity_dir)
+        import os
+        import uuid
+        self.run_id = run_id or os.environ.get("GITHUB_RUN_ID") or f"local-{uuid.uuid4().hex[:8]}"
 
     def _path_for(self, date: str) -> Path:
         self.activity_dir.mkdir(parents=True, exist_ok=True)
@@ -70,6 +83,7 @@ class DailyActivityRecorder:
     def _write(self, record: dict) -> None:
         date = nigeria_today()
         record.setdefault("ts", pd.Timestamp.now(tz="UTC").isoformat())
+        record.setdefault("run_id", self.run_id)
         with open(self._path_for(date), "a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, default=str) + "\n")
 
@@ -82,6 +96,7 @@ class DailyActivityRecorder:
             "type": "decision", "opportunity_id": opp.opportunity_id, "symbol": opp.symbol,
             "strategy_id": opp.strategy_id, "verdict": decision.verdict, "ios": decision.ios,
             "itqs": opp.itqs, "reasons_against": list(decision.reasons_against or []),
+            "session": getattr(opp, "session", None),
         })
 
     def record_trade_opened(self, position_id: str, symbol: str, strategy_id: str, direction: str) -> None:
@@ -95,6 +110,87 @@ class DailyActivityRecorder:
 
     def record_feed_error(self, symbol: str, detail: str) -> None:
         self._write({"type": "feed_error", "symbol": symbol, "detail": detail})
+
+    def record_data_quality_warning(self, symbol: str, detail: str) -> None:
+        self._write({"type": "data_quality_warning", "symbol": symbol, "detail": detail})
+
+    def record_notification_sent(self, alert_type: str) -> None:
+        self._write({"type": "notification_sent", "alert_type": alert_type})
+
+    def record_cycle_summary(self, workflow_status: str, runtime_seconds: float,
+                              symbols_scanned: list, candles_processed: int, signals_detected: int,
+                              approved: int, rejected: int, notifications_sent: int = 0,
+                              memory_mb: Optional[float] = None, workflow_name: Optional[str] = None) -> None:
+        """One record per full script execution (Phase 1's per-execution
+        fields: workflow ID [via run_id, stamped on every record already],
+        workflow status, runtime, memory usage). Written ONCE at the end
+        of a scan/report script's main(), after every other record for
+        that run has already been written -- so a crash mid-run still
+        leaves the granular scan/decision/feed_error records behind for
+        the aggregation engine, it just won't have a cycle_summary
+        closing that particular run_id (visible as a "failed scan" per
+        Phase 4's missed/failed-scan accounting)."""
+        import os
+        self._write({
+            "type": "cycle_summary", "workflow_status": workflow_status, "runtime_seconds": round(runtime_seconds, 2),
+            "symbols_scanned": list(symbols_scanned), "candles_processed": candles_processed,
+            "signals_detected": signals_detected, "approved": approved, "rejected": rejected,
+            "notifications_sent": notifications_sent, "memory_mb": memory_mb,
+            "workflow_name": workflow_name or os.environ.get("GITHUB_WORKFLOW"),
+        })
+
+
+def render_operational_journal(date: str, activity_dir: str | Path = "data/live/journal/activity") -> str:
+    """Task 11.3 Phase 2: the human-readable operational journal, grouped
+    by execution (run_id) in chronological order -- one block per scan,
+    matching the task brief's own worked example (timestamp, symbols
+    scanned, signal/approval/rejection counts, a divider). Built purely
+    from already-recorded activity; nothing here is computed or
+    estimated, only grouped and formatted."""
+    records = load_activity(date, activity_dir)
+    if not records:
+        return f"{date}\n\n(No activity recorded.)\n"
+
+    by_run: dict = {}
+    order: list = []
+    for r in records:
+        rid = r.get("run_id", "unknown")
+        if rid not in by_run:
+            by_run[rid] = []
+            order.append(rid)
+        by_run[rid].append(r)
+
+    # Order execution blocks by their earliest record's timestamp, not by
+    # first-seen-in-file order (a rebased/retried commit could otherwise
+    # interleave runs out of chronological sequence).
+    order.sort(key=lambda rid: min(r["ts"] for r in by_run[rid]))
+
+    lines = [date, ""]
+    for rid in order:
+        group = by_run[rid]
+        earliest = min(pd.Timestamp(r["ts"]) for r in group)
+        label = earliest.tz_convert(NIGERIA_TZ).strftime("%H:%M")
+        lines.append(label)
+        for r in group:
+            if r["type"] == "scan":
+                lines.append(f"{r['symbol']} scanned")
+        signals = [r for r in group if r["type"] == "decision"]
+        approved = sum(1 for r in signals if r["verdict"] == "EXECUTE")
+        rejected = sum(1 for r in signals if r["verdict"] in ("IGNORE", "POSTPONE"))
+        lines.append(f"{len(signals)} signals")
+        if approved:
+            lines.append(f"{approved} approved")
+        if rejected:
+            lines.append(f"{rejected} rejected")
+        for r in group:
+            if r["type"] == "trade_opened":
+                lines.append(f"paper trade opened: {r['symbol']} ({r['strategy_id']})")
+            elif r["type"] == "trade_closed":
+                lines.append(f"paper trade closed: {r['symbol']} pnl={r['realized_pnl']}")
+            elif r["type"] == "feed_error":
+                lines.append(f"feed error: {r['symbol']}")
+        lines.append("-" * 32)
+    return "\n".join(lines) + "\n"
 
 
 def load_activity(date: str, activity_dir: str | Path = "data/live/journal/activity") -> list:
@@ -186,6 +282,21 @@ def generate_daily_report(date: str, activity_dir: str | Path = "data/live/journ
     symbol_counts = Counter(d["symbol"] for d in approved)
     best_symbol = symbol_counts.most_common(1)[0][0] if symbol_counts else None
 
+    # Task 11.3 Phase 6 raw material -- session breakdown (all decisions,
+    # not just approved, so "which session produced most OPPORTUNITIES"
+    # matches the task brief's own wording), per-strategy average IOS,
+    # and per-symbol approval rate (signals seen vs approved).
+    session_counts = Counter(d.get("session") for d in decisions if d.get("session"))
+    strategy_avg_ios: dict = {}
+    for strat in {d["strategy_id"] for d in decisions}:
+        vals = [d["ios"] for d in decisions if d["strategy_id"] == strat]
+        strategy_avg_ios[strat] = round(sum(vals) / len(vals), 2) if vals else None
+    symbol_signal_counts = Counter(d["symbol"] for d in decisions)
+    symbol_approval_rate = {
+        sym: round(symbol_counts.get(sym, 0) / count, 4)
+        for sym, count in symbol_signal_counts.items()
+    }
+
     rejection_categories = Counter(
         categorize_rejection_reason(reason)
         for d in rejected for reason in (d["reasons_against"] or ["Other"])
@@ -193,6 +304,43 @@ def generate_daily_report(date: str, activity_dir: str | Path = "data/live/journ
     most_common_rejection_reason = rejection_categories.most_common(1)[0][0] if rejection_categories else None
 
     has_broker_data = bool(opened or closed)
+
+    # Task 11.3 Phase 3/4 -- aggregation across the whole day + system
+    # health, built from cycle_summary records (one per script execution,
+    # see DailyActivityRecorder.record_cycle_summary). A run that crashed
+    # before writing its cycle_summary (but after writing some scan/
+    # decision records) shows up as scans_without_summary > 0 below --
+    # real evidence of a failure, not silently dropped.
+    cycles = [r for r in records if r["type"] == "cycle_summary"]
+    successful_cycles = [c for c in cycles if c["workflow_status"] == "success"]
+    failed_cycles = [c for c in cycles if c["workflow_status"] != "success"]
+    notifications_sent = sum(c.get("notifications_sent", 0) for c in cycles)
+    runtimes = [c["runtime_seconds"] for c in cycles if c.get("runtime_seconds") is not None]
+    memory_values = [c["memory_mb"] for c in cycles if c.get("memory_mb") is not None]
+    data_quality_warnings = [r for r in records if r["type"] == "data_quality_warning"]
+
+    run_ids_with_cycle_summary = {c["run_id"] for c in cycles}
+    run_ids_all = {r["run_id"] for r in records}
+    scans_without_summary = len(run_ids_all - run_ids_with_cycle_summary)   # crashed/incomplete executions
+
+    # Expected scan count: the platform's schedule is every 5 minutes
+    # (.github/workflows/telegram-scan.yml). Computed from the ACTUAL
+    # observed time span of today's records, not assumed to be a full
+    # 24h day -- a partial day (platform started mid-day, or this report
+    # is being generated for "today" while today is still in progress)
+    # must not be misreported as having "missed" scans it was never
+    # scheduled to run yet.
+    all_ts = [pd.Timestamp(r["ts"]) for r in records]
+    if all_ts:
+        span_minutes = (max(all_ts) - min(all_ts)).total_seconds() / 60.0
+        expected_scans = max(1, round(span_minutes / 5) + 1)
+    else:
+        expected_scans = 0
+    completed_scans = len(cycles)
+    missed_scans = max(0, expected_scans - completed_scans)
+
+    average_ios = _mean([d["ios"] for d in decisions])
+    provider_uptime_pct = round(len(successful_cycles) / len(cycles) * 100, 1) if cycles else None
 
     return {
         "date": date,
@@ -221,6 +369,27 @@ def generate_daily_report(date: str, activity_dir: str | Path = "data/live/journ
         "ios_values": [d["ios"] for d in decisions],       # raw values, kept for Phase 3/4 comparison -- not shown in the Telegram report directly
         "itqs_values": [d["itqs"] for d in decisions if d["itqs"] is not None],
         "strategy_counts": dict(strategy_counts),
+        "symbol_counts": dict(symbol_counts),
+        "session_counts": dict(session_counts),
+        "strategy_avg_ios": strategy_avg_ios,
+        "symbol_signal_counts": dict(symbol_signal_counts),
+        "symbol_approval_rate": symbol_approval_rate,
+        "average_ios": round(average_ios, 2) if average_ios is not None else None,
+        "notifications_sent": notifications_sent,
+        # System health (Phase 4)
+        "total_scans": len(cycles),
+        "successful_scans": len(successful_cycles),
+        "failed_scans": len(failed_cycles),
+        "scans_without_summary": scans_without_summary,   # executions that started but never wrote a cycle_summary -- likely crashed/timed out
+        "expected_scans": expected_scans,
+        "completed_scans": completed_scans,
+        "missed_scans": missed_scans,
+        "average_runtime_seconds": round(sum(runtimes) / len(runtimes), 2) if runtimes else None,
+        "average_memory_mb": round(sum(memory_values) / len(memory_values), 1) if memory_values else None,
+        "provider_uptime_pct": provider_uptime_pct,
+        "download_failures": len(feed_errors),   # every feed_error record is one failed provider.poll() call
+        "data_quality_warnings": len(data_quality_warnings),
+        "reconnect_count": None,   # honest gap -- see docs/OPERATIONAL_STATE_ARCHITECTURE.md: the stateless scan script calls provider.connect() fresh every 5 minutes rather than maintaining a persistent connection via FeedManager, so "reconnect" isn't a meaningful event in this deployment
     }
 
 
@@ -285,6 +454,40 @@ def generate_observations(report: dict) -> list:
         if report["highest_ios"] is not None:
             obs.append(f"Highest IOS observed today: {report['highest_ios']}.")
 
+        # Task 11.3 Phase 6 -- session, strategy, and symbol observations.
+        # Each requires a minimum sample before being stated, per the
+        # task's "only statistically supported observations" rule: a
+        # single opportunity is not evidence of session or symbol
+        # dominance, it's a coincidence with a sample size of one.
+        session_counts = report.get("session_counts") or {}
+        if session_counts and sum(session_counts.values()) >= 3:
+            top_session, top_count = max(session_counts.items(), key=lambda kv: kv[1])
+            obs.append(f"The {top_session} session produced the most opportunities today "
+                       f"({top_count} of {sum(session_counts.values())}).")
+
+        strategy_avg_ios = report.get("strategy_avg_ios") or {}
+        if len(strategy_avg_ios) >= 2:
+            ranked = sorted(strategy_avg_ios.items(), key=lambda kv: (kv[1] is None, kv[1]), reverse=True)
+            top, second = ranked[0], ranked[1]
+            if top[1] is not None and second[1] is not None and top[1] > second[1]:
+                obs.append(f"{top[0]} generated stronger average IOS ({top[1]}) than {second[0]} ({second[1]}) today.")
+
+        symbol_signal_counts = report.get("symbol_signal_counts") or {}
+        symbol_approval_rate = report.get("symbol_approval_rate") or {}
+        for sym, count in symbol_signal_counts.items():
+            if count >= 3 and symbol_approval_rate.get(sym, 1.0) <= 0.34:
+                obs.append(f"{sym} generated {count} signals today but a low approval rate "
+                           f"({symbol_approval_rate[sym]*100:.0f}%).")
+
+    if report.get("total_scans", 0) > 0 and report.get("download_failures", 0) == 0:
+        obs.append("No provider outages occurred today.")
+    elif report.get("download_failures", 0) > 0:
+        obs.append(f"{report['download_failures']} provider download failure(s) occurred today "
+                   f"(provider uptime: {report.get('provider_uptime_pct')}%).")
+
+    if report.get("missed_scans", 0) > 0:
+        obs.append(f"{report['missed_scans']} of {report.get('expected_scans')} expected scans did not complete today.")
+
     if report["no_paper_broker_data"]:
         obs.append("No paper broker activity recorded today -- this deployment (GitHub Actions scan-only, "
                     "per docs/GITHUB_ACTIONS_SETUP_GUIDE.md) does not run a paper broker. Win rate/expectancy/"
@@ -312,6 +515,7 @@ def _mean(values: list) -> Optional[float]:
 
 
 def compare_historical(report: dict, journal_dir: str | Path = "data/live/journal/reports") -> dict:
+    yesterday_reports = load_recent_reports(report["date"], 1, journal_dir)
     week = load_recent_reports(report["date"], 7, journal_dir)
     month = load_recent_reports(report["date"], 30, journal_dir)
 
@@ -328,10 +532,21 @@ def compare_historical(report: dict, journal_dir: str | Path = "data/live/journa
             "avg_highest_ios": _mean([r["highest_ios"] for r in reports]),
         }
 
+    yesterday_summary = _summarize(yesterday_reports, min_days=1)
     week_summary = _summarize(week, min_days=1)
     month_summary = _summarize(month, min_days=MIN_DAYS_FOR_HISTORICAL_COMPARISON)
 
+    # Task 11.3 Phase 7: "highlight meaningful deviations... do not report
+    # insignificant noise" -- a fixed 50% relative-change threshold, only
+    # ever applied against a real prior baseline (never a fabricated one).
     deviations = []
+    if yesterday_summary:
+        y_signals = yesterday_reports[0]["signals_detected"]
+        today_signals = report["signals_detected"]
+        if y_signals > 0 and abs(today_signals - y_signals) / y_signals >= 0.5:
+            direction = "above" if today_signals > y_signals else "below"
+            deviations.append(f"Today's signal count ({today_signals}) is {direction} yesterday's ({y_signals}) "
+                              f"by {abs(today_signals - y_signals) / y_signals * 100:.0f}%.")
     if week_summary and week_summary["avg_signals_detected"] is not None:
         today_signals = report["signals_detected"]
         avg = week_summary["avg_signals_detected"]
@@ -341,6 +556,7 @@ def compare_historical(report: dict, journal_dir: str | Path = "data/live/journa
                               f"average ({avg}) by {abs(today_signals - avg) / avg * 100:.0f}%.")
 
     return {
+        "yesterday": yesterday_summary or "No prior day's report available for comparison.",
         "previous_week": week_summary or f"Insufficient history for a weekly comparison (need >=1 prior day, have {len(week)}).",
         "previous_month": month_summary or f"Insufficient history for a monthly comparison (need >={MIN_DAYS_FOR_HISTORICAL_COMPARISON} prior days, have {len(month)}).",
         "notable_deviations": deviations,
@@ -398,6 +614,33 @@ def detect_drift(report: dict, journal_dir: str | Path = "data/live/journal/repo
                 anomalies.append({"type": "strategy_frequency_shift",
                                   "detail": f"{strategy_id}'s share of today's approved opportunities ({today_share*100:.0f}%) is "
                                            f"{direction} from its {len(baseline_reports)}-day baseline share ({baseline_share*100:.0f}%)."})
+
+    # Task 11.3 Phase 8 additions: approval-rate drift and provider-
+    # reliability drift, same "real baseline or no claim" discipline.
+    baseline_signals = sum(r["signals_detected"] for r in baseline_reports)
+    baseline_approved = sum(r["approved_opportunities"] for r in baseline_reports)
+    if baseline_signals > 0 and report["signals_detected"] > 0:
+        baseline_rate = baseline_approved / baseline_signals
+        today_rate = report["approved_opportunities"] / report["signals_detected"]
+        if baseline_rate > 0 and abs(today_rate - baseline_rate) / baseline_rate >= 0.5:
+            direction = "up" if today_rate > baseline_rate else "down"
+            anomalies.append({"type": "approval_rate_shift",
+                              "detail": f"Today's approval rate ({today_rate*100:.0f}%) is {direction} from the "
+                                       f"{len(baseline_reports)}-day baseline ({baseline_rate*100:.0f}%)."})
+
+    baseline_uptimes = [r["provider_uptime_pct"] for r in baseline_reports if r.get("provider_uptime_pct") is not None]
+    if baseline_uptimes and report.get("provider_uptime_pct") is not None:
+        baseline_uptime = sum(baseline_uptimes) / len(baseline_uptimes)
+        if baseline_uptime > 0 and abs(report["provider_uptime_pct"] - baseline_uptime) / baseline_uptime >= 0.1:
+            anomalies.append({"type": "provider_reliability_shift",
+                              "detail": f"Today's provider uptime ({report['provider_uptime_pct']}%) differs from the "
+                                       f"{len(baseline_reports)}-day baseline ({baseline_uptime:.1f}%)."})
+
+    # Market regime drift is explicitly NOT computed here -- it would
+    # require src.research.market_conditions' classification, which is
+    # not wired into the live pipeline (see docs/OPERATIONAL_STATE_ARCHITECTURE.md).
+    # Reporting it anyway would mean inventing a conclusion with no
+    # underlying evidence, which the task explicitly forbids.
 
     if not anomalies:
         anomalies.append({"type": "none", "detail": f"No distribution/frequency drift detected against the {len(baseline_reports)}-day baseline."})
@@ -470,6 +713,118 @@ def render_report_markdown(report: dict, observations: list, historical: dict, d
     lines += ["", "*Recommendations*"] + [f"- {r}" for r in recommendations]
     lines += ["", f"_Generated {report['generated_at']}_"]
     return "\n".join(lines)
+
+
+def render_daily_report_v2_markdown(report: dict, observations: list, historical: dict, drift: list,
+                                     recommendations: list, monitored_symbols: Optional[list] = None) -> str:
+    """Task 11.3 Phase 5 — Daily Intelligence Report v2, matching the
+    task brief's requested structure and section order (System
+    Operations -> Markets Monitored -> Trading Activity -> Performance
+    -> System Health -> AI Operational Summary -> Historical Comparison
+    -> Drift Detection -> Recommendations). Every value is read straight
+    from `report`/`observations`/`historical`/`drift`/`recommendations`
+    -- this function only formats, it computes nothing itself."""
+    L = []
+    L.append(f"📊 *SozoFX Daily Intelligence Report*")
+    L.append(f"_{report['date']}_")
+
+    L.append("")
+    L.append("*System Operations*")
+    L.append(f"Scheduled scans: `{report.get('expected_scans')}`")
+    L.append(f"Completed scans: `{report.get('completed_scans')}`")
+    L.append(f"Missed scans: `{report.get('missed_scans')}`")
+    uptime = report.get("provider_uptime_pct")
+    L.append(f"System uptime: `{uptime}%`" if uptime is not None else "System uptime: `no scans recorded`")
+    avg_rt = report.get("average_runtime_seconds")
+    L.append(f"Average runtime: `{avg_rt}s`" if avg_rt is not None else "Average runtime: `n/a`")
+
+    L.append("")
+    L.append("*Markets Monitored*")
+    symbols = monitored_symbols or report["markets_scanned"]
+    if symbols:
+        for sym in symbols:
+            L.append(f"{sym} ✅" if sym in report["markets_scanned"] else f"{sym} ⚠️ not scanned today")
+    else:
+        L.append("none")
+
+    L.append("")
+    L.append("*Trading Activity*")
+    L.append(f"Candles processed: `{report['candles_processed']}`")
+    L.append(f"Signals detected: `{report['signals_detected']}`")
+    L.append(f"Approved: `{report['approved_opportunities']}`")
+    L.append(f"Rejected: `{report['rejected_opportunities']}`")
+    if report["no_paper_broker_data"]:
+        L.append("Paper trades opened: `n/a (no paper broker in this deployment)`")
+        L.append("Paper trades closed: `n/a (no paper broker in this deployment)`")
+    else:
+        opened_today = (report["open_paper_trades"] or 0) + (report["closed_paper_trades"] or 0)
+        L.append(f"Paper trades opened: `{opened_today}`")
+        L.append(f"Paper trades closed: `{report['closed_paper_trades']}`")
+
+    L.append("")
+    L.append("*Performance*")
+    if report["no_paper_broker_data"]:
+        L.append("Win rate / expectancy / profit factor: `not applicable (no paper broker in this deployment)`")
+    else:
+        L.append(f"Win rate: `{report['win_rate']}`")
+        L.append(f"Expectancy: `{report['expectancy']}`")
+        L.append(f"Profit factor: `{report['profit_factor']}`")
+    L.append(f"Average IOS: `{report.get('average_ios')}`")
+    L.append(f"Highest IOS: `{report['highest_ios']}`")
+    L.append(f"Highest ITQS: `{report['highest_itqs']}`")
+    L.append(f"Best strategy: `{report['best_strategy']}`")
+    L.append(f"Best symbol: `{report['best_symbol']}`")
+    L.append(f"Most common rejection reason: `{report['most_common_rejection_reason']}`")
+
+    L.append("")
+    L.append("*System Health*")
+    L.append(f"Feed interruptions: `{report.get('download_failures')}`")
+    L.append(f"Reconnects: `{report.get('reconnect_count') if report.get('reconnect_count') is not None else 'n/a (see docs/OPERATIONAL_STATE_ARCHITECTURE.md)'}`")
+    L.append(f"Missing/incomplete scans: `{report.get('scans_without_summary')}`")
+    L.append(f"Provider failures: `{report.get('failed_scans')}`")
+    L.append(f"GitHub workflow failures: `{report.get('failed_scans')}`")
+    L.append(f"Data quality warnings: `{report.get('data_quality_warnings')}`")
+    avg_mem = report.get("average_memory_mb")
+    L.append(f"Memory warnings: `{'none' if avg_mem is None or avg_mem < 400 else f'avg {avg_mem}MB, review'}`")
+    L.append(f"Latency warnings: `n/a (see docs/OPERATIONAL_STATE_ARCHITECTURE.md -- polling architecture, no meaningful per-tick latency)`")
+
+    L.append("")
+    L.append("*AI Operational Summary*")
+    L += [f"- {o}" for o in observations]
+
+    L.append("")
+    L.append("*Historical Comparison*")
+    if isinstance(historical.get("yesterday"), dict):
+        y = historical["yesterday"]
+        L.append(f"vs yesterday: signals {y['avg_signals_detected']}, approved {y['avg_approved_opportunities']}, IOS {y['avg_highest_ios']}")
+    else:
+        L.append(str(historical.get("yesterday")))
+    if isinstance(historical["previous_week"], dict):
+        w = historical["previous_week"]
+        L.append(f"vs prior {w['days']}-day avg: signals {w['avg_signals_detected']}, approved {w['avg_approved_opportunities']}, IOS {w['avg_highest_ios']}")
+    else:
+        L.append(historical["previous_week"])
+    if isinstance(historical["previous_month"], dict):
+        m = historical["previous_month"]
+        L.append(f"vs prior {m['days']}-day avg: signals {m['avg_signals_detected']}, approved {m['avg_approved_opportunities']}, IOS {m['avg_highest_ios']}")
+    else:
+        L.append(historical["previous_month"])
+    if historical["notable_deviations"]:
+        L += [f"- {d}" for d in historical["notable_deviations"]]
+    else:
+        L.append("No meaningful deviations from historical activity.")
+
+    L.append("")
+    L.append("*Drift Detection*")
+    L += [f"- {a['detail']}" for a in drift]
+
+    L.append("")
+    L.append("*Operational Recommendations*")
+    L += [f"- {r}" for r in recommendations]
+
+    L.append("")
+    L.append(f"_Generated {report['generated_at']}_")
+    return "\n".join(L)
 
 
 def append_learning_log(report: dict, observations: list, drift: list, recommendations: list,

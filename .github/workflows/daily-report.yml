@@ -49,9 +49,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/live/journal/reports data/live/journal/learning_log.jsonl docs/journal/LEARNING_LOG.md
+          git add data/live/journal/reports data/live/journal/operational data/live/journal/learning_log.jsonl docs/journal/LEARNING_LOG.md
           if ! git diff --cached --quiet; then
             git commit -m "chore: daily intelligence report + learning log update [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           else
             echo "No journal change to commit."

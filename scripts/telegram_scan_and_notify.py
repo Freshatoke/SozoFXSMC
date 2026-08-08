@@ -32,11 +32,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pandas as pd
+import psutil
 
 from src.live.providers.dukascopy_live import DukascopyLiveProvider, ProviderConnectionError
 from src.live.context_stream import LiveMarketContext
@@ -68,7 +70,7 @@ def prune_state(state: dict, now: pd.Timestamp) -> dict:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--symbols", default="EURUSD,GBPUSD")
+    parser.add_argument("--symbols", default="EURUSD,GBPUSD,USDJPY,AUDUSD,USDCHF,USDCAD,NZDUSD")
     parser.add_argument("--lookback-hours", type=int, default=6)
     parser.add_argument("--state-file", default="data/live/notified_opportunities.json")
     parser.add_argument("--activity-dir", default="data/live/journal/activity",
@@ -87,56 +89,85 @@ def main():
     account = AccountState()
     decision_engine = LiveDecisionEngine(account=account)
 
-    all_new_opportunities = []
-    for symbol in symbols:
-        ctx = LiveMarketContext(symbol=symbol)
-        runner = LiveStrategyRunner(context=ctx)
+    start = time.perf_counter()
+    workflow_status = "success"
+    symbols_actually_scanned, total_candles, sent = [], 0, 0
+    decisions, approved = [], []
+
+    try:
+        all_new_opportunities = []
+        for symbol in symbols:
+            ctx = LiveMarketContext(symbol=symbol)
+            runner = LiveStrategyRunner(context=ctx)
+            try:
+                provider.connect()
+                batch = provider.poll(symbol, "M1", since=None)
+            except ProviderConnectionError as exc:
+                print(f"[{symbol}] provider error: {exc}", file=sys.stderr)
+                recorder.record_feed_error(symbol, str(exc))
+                continue
+
+            for row in batch.candles.itertuples(index=False):
+                ctx.ingest_m1_candle(row.timestamp, row.open, row.high, row.low, row.close)
+                all_new_opportunities.extend(runner.on_candle_closed())
+
+            recorder.record_scan(symbol, len(batch.candles))
+            symbols_actually_scanned.append(symbol)
+            total_candles += len(batch.candles)
+            print(f"[{symbol}] candles={len(batch.candles)} opportunities={len(all_new_opportunities)}")
+
+        decisions = decision_engine.on_new_opportunities(all_new_opportunities)
+        for d in decisions:
+            recorder.record_decision(d)
+        approved = [d for d in decisions if d.verdict == "EXECUTE"]
+        print(f"Decisions: {len(decisions)} total, {len(approved)} approved.")
+
+        skipped = 0
+        for d in approved:
+            opp = d.opportunity
+            if opp.opportunity_id in state:
+                skipped += 1
+                continue
+
+            message = format_trade_alert_markdown(
+                ALERT_APPROVED_OPPORTUNITY, symbol=opp.symbol, strategy_id=opp.strategy_id, direction=opp.direction,
+                entry=opp.entry, stop_loss=opp.stop, take_profit=opp.target, ios=d.ios, itqs=opp.itqs,
+                reason="; ".join(d.reasons_for) or "IOS ranking + allocation checks passed", timestamp=opp.timestamp,
+            )
+            try:
+                notifier.notify(ALERT_APPROVED_OPPORTUNITY, message)
+                sent += 1
+                recorder.record_notification_sent(ALERT_APPROVED_OPPORTUNITY)
+            except NotConfiguredError as exc:
+                print(f"Telegram not configured: {exc}", file=sys.stderr)
+            except Exception as exc:
+                print(f"Telegram send failed for {opp.opportunity_id}: {exc}", file=sys.stderr)
+                continue  # do NOT mark as notified if the send failed -- retry next scan
+
+            state[opp.opportunity_id] = str(opp.timestamp)
+
+        save_state(state_path, state)
+        print(f"Sent {sent} new alert(s), skipped {skipped} already-notified. State file: {state_path} ({len(state)} entries).")
+    except Exception:
+        # Task 11.3 Phase 1/4: an unhandled failure still gets recorded as
+        # a failed cycle_summary (workflow_status="failed") before the
+        # exception propagates and the GitHub Actions step itself fails --
+        # this is what lets the daily report's "GitHub workflow failures"
+        # count a crash that happened AFTER some symbols were already
+        # scanned, not just a total no-op.
+        workflow_status = "failed"
+        raise
+    finally:
         try:
-            provider.connect()
-            batch = provider.poll(symbol, "M1", since=None)
-        except ProviderConnectionError as exc:
-            print(f"[{symbol}] provider error: {exc}", file=sys.stderr)
-            recorder.record_feed_error(symbol, str(exc))
-            continue
-
-        for row in batch.candles.itertuples(index=False):
-            ctx.ingest_m1_candle(row.timestamp, row.open, row.high, row.low, row.close)
-            all_new_opportunities.extend(runner.on_candle_closed())
-
-        recorder.record_scan(symbol, len(batch.candles))
-        print(f"[{symbol}] candles={len(batch.candles)} opportunities={len(all_new_opportunities)}")
-
-    decisions = decision_engine.on_new_opportunities(all_new_opportunities)
-    for d in decisions:
-        recorder.record_decision(d)
-    approved = [d for d in decisions if d.verdict == "EXECUTE"]
-    print(f"Decisions: {len(decisions)} total, {len(approved)} approved.")
-
-    sent, skipped = 0, 0
-    for d in approved:
-        opp = d.opportunity
-        if opp.opportunity_id in state:
-            skipped += 1
-            continue
-
-        message = format_trade_alert_markdown(
-            ALERT_APPROVED_OPPORTUNITY, symbol=opp.symbol, strategy_id=opp.strategy_id, direction=opp.direction,
-            entry=opp.entry, stop_loss=opp.stop, take_profit=opp.target, ios=d.ios, itqs=opp.itqs,
-            reason="; ".join(d.reasons_for) or "IOS ranking + allocation checks passed", timestamp=opp.timestamp,
+            memory_mb = round(psutil.Process().memory_info().rss / (1024 * 1024), 1)
+        except Exception:
+            memory_mb = None
+        recorder.record_cycle_summary(
+            workflow_status=workflow_status, runtime_seconds=time.perf_counter() - start,
+            symbols_scanned=symbols_actually_scanned, candles_processed=total_candles,
+            signals_detected=len(decisions), approved=len(approved), rejected=len(decisions) - len(approved),
+            notifications_sent=sent, memory_mb=memory_mb,
         )
-        try:
-            notifier.notify(ALERT_APPROVED_OPPORTUNITY, message)
-            sent += 1
-        except NotConfiguredError as exc:
-            print(f"Telegram not configured: {exc}", file=sys.stderr)
-        except Exception as exc:
-            print(f"Telegram send failed for {opp.opportunity_id}: {exc}", file=sys.stderr)
-            continue  # do NOT mark as notified if the send failed -- retry next scan
-
-        state[opp.opportunity_id] = str(opp.timestamp)
-
-    save_state(state_path, state)
-    print(f"Sent {sent} new alert(s), skipped {skipped} already-notified. State file: {state_path} ({len(state)} entries).")
 
 
 if __name__ == "__main__":

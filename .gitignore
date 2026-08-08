@@ -32,6 +32,9 @@ data/live/journal/activity/*
 !data/live/journal/reports/
 data/live/journal/reports/*
 !data/live/journal/reports/*.json
+!data/live/journal/operational/
+data/live/journal/operational/*
+!data/live/journal/operational/*.txt
 !data/live/journal/learning_log.jsonl
 
 # Generated reports/notebooks output (large, regenerated) -- anchored to
