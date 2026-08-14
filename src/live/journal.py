@@ -51,6 +51,37 @@ def nigeria_today(now_utc: Optional[pd.Timestamp] = None) -> str:
     return now.tz_convert(NIGERIA_TZ).strftime("%Y-%m-%d")
 
 
+# Task 11.4 Phase 1/8 finding: GitHub's `schedule` trigger is documented
+# as best-effort and gets delayed under platform load -- this repo's own
+# run history shows daily-report.yml's 21:00 UTC (22:00 Lagos) cron
+# firing anywhere from on-time to 2.5+ hours late, with 7 of the last 9
+# scheduled runs landing AFTER MIDNIGHT LAGOS TIME. Because
+# `generate_daily_report.py` used to default its target date to
+# `nigeria_today()` (i.e. "whatever day it is RIGHT NOW"), a late-firing
+# report would compute the brand-new (0-90-minute-old, nearly empty)
+# calendar day instead of the day that had just ended -- this was the
+# root cause of the "Scheduled scans: 0 / Candles processed: 0" reports.
+# `REPORT_EARLY_MORNING_CUTOFF_HOUR` treats any execution between
+# midnight and this hour, Lagos time, as still reporting on the PRIOR
+# day -- comfortably covering the delay actually observed (up to ~2.5h)
+# with margin, since the report is never intentionally scheduled to run
+# in that window.
+REPORT_EARLY_MORNING_CUTOFF_HOUR = 6
+
+
+def nigeria_reporting_date(now_utc: Optional[pd.Timestamp] = None) -> str:
+    """The date `generate_daily_report.py` should summarize when called
+    with no explicit `--date` -- NOT simply "today" (see module-level
+    note above). Manual/testing calls that want the literal current
+    calendar date regardless of time-of-day should use `nigeria_today()`
+    directly instead."""
+    now = now_utc if now_utc is not None else pd.Timestamp.now(tz="UTC")
+    lagos = now.tz_convert(NIGERIA_TZ)
+    if lagos.hour < REPORT_EARLY_MORNING_CUTOFF_HOUR:
+        lagos = lagos - pd.Timedelta(days=1)
+    return lagos.strftime("%Y-%m-%d")
+
+
 # ----------------------------------------------------------------------
 # Activity recording
 # ----------------------------------------------------------------------

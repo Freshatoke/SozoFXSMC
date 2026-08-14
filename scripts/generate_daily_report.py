@@ -26,7 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.live.journal import (
-    nigeria_today, generate_daily_report, save_daily_report, generate_observations,
+    nigeria_reporting_date, generate_daily_report, save_daily_report, generate_observations,
     compare_historical, detect_drift, generate_recommendations, render_daily_report_v2_markdown,
     render_operational_journal, append_learning_log,
 )
@@ -37,7 +37,10 @@ MONITORED_SYMBOLS = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD",
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--date", default=None, help="YYYY-MM-DD (Nigeria-local). Defaults to today.")
+    parser.add_argument("--date", default=None,
+                         help="YYYY-MM-DD (Nigeria-local). Defaults to nigeria_reporting_date() -- "
+                              "'today' unless it's currently before 06:00 Lagos time, in which case "
+                              "'yesterday' (handles GitHub's scheduled-trigger delay; see journal.py).")
     parser.add_argument("--activity-dir", default="data/live/journal/activity")
     parser.add_argument("--reports-dir", default="data/live/journal/reports")
     parser.add_argument("--journal-dir", default="data/live/journal/operational")
@@ -46,7 +49,7 @@ def main():
     parser.add_argument("--no-telegram", action="store_true", help="Compute and print/save the report without sending to Telegram.")
     args = parser.parse_args()
 
-    date = args.date or nigeria_today()
+    date = args.date or nigeria_reporting_date()
 
     report = generate_daily_report(date, activity_dir=args.activity_dir)
     observations = generate_observations(report)

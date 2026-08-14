@@ -16,6 +16,17 @@ on:
     - cron: "0 21 * * *"
   workflow_dispatch: {}
 
+# Task 11.4 Phase 9: defense in depth against an overlapping manual
+# trigger racing the scheduled run (or a delayed scheduled run overlapping
+# a manual one) -- serializes report generation the same way
+# telegram-scan.yml already serializes scans. Combined with the
+# `git pull --rebase` in the commit step, an overlap here would be
+# harmless anyway (both write to non-conflicting, date-named files), but
+# there's no reason to allow the race at all.
+concurrency:
+  group: daily-report
+  cancel-in-progress: false
+
 permissions:
   contents: write
 

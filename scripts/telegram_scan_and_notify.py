@@ -46,7 +46,7 @@ from src.live.strategy_runner import LiveStrategyRunner
 from src.live.decision_stream import LiveDecisionEngine
 from src.decision_engine.risk_layer import AccountState
 from src.live.notifications import TelegramNotifier, NotConfiguredError, format_trade_alert_markdown
-from src.live.journal import DailyActivityRecorder
+from src.live.journal import DailyActivityRecorder, nigeria_today
 
 ALERT_APPROVED_OPPORTUNITY = "Approved Trade Opportunity"
 STATE_RETENTION_DAYS = 14   # dedupe entries older than this are pruned (state file must not grow forever)
@@ -66,6 +66,15 @@ def save_state(path: Path, state: dict) -> None:
 def prune_state(state: dict, now: pd.Timestamp) -> dict:
     cutoff = now - pd.Timedelta(days=STATE_RETENTION_DAYS)
     return {oid: ts for oid, ts in state.items() if pd.Timestamp(ts) >= cutoff}
+
+
+def log_event(name: str, **fields) -> None:
+    """Task 11.4 Phase 2: structured stage markers for tracing one scan
+    execution end-to-end in GitHub Actions' own run log -- printed, not
+    stored (the activity JSONL already IS the structured persisted
+    record; this is for a human reading `gh run view --log` directly)."""
+    parts = "\n".join(f"{k}={v}" for k, v in fields.items())
+    print(f"{name}\n{parts}" if parts else name)
 
 
 def main():
@@ -94,32 +103,50 @@ def main():
     symbols_actually_scanned, total_candles, sent = [], 0, 0
     decisions, approved = [], []
 
+    log_event("SCAN_START", timestamp=now.isoformat(), workflow_run_id=recorder.run_id, symbols=",".join(symbols))
+
     try:
         all_new_opportunities = []
         for symbol in symbols:
             ctx = LiveMarketContext(symbol=symbol)
             runner = LiveStrategyRunner(context=ctx)
+            t0 = time.perf_counter()
             try:
                 provider.connect()
                 batch = provider.poll(symbol, "M1", since=None)
             except ProviderConnectionError as exc:
                 print(f"[{symbol}] provider error: {exc}", file=sys.stderr)
                 recorder.record_feed_error(symbol, str(exc))
+                log_event("DATA_RECEIVED", symbol=symbol, candles=0, status="failed",
+                          processing_time_s=round(time.perf_counter() - t0, 2), error=str(exc))
                 continue
 
+            log_event("DATA_RECEIVED", symbol=symbol, candles=len(batch.candles), status="ok",
+                      processing_time_s=round(time.perf_counter() - t0, 2))
+
+            symbol_opportunities = []
             for row in batch.candles.itertuples(index=False):
                 ctx.ingest_m1_candle(row.timestamp, row.open, row.high, row.low, row.close)
-                all_new_opportunities.extend(runner.on_candle_closed())
+                symbol_opportunities.extend(runner.on_candle_closed())
+            s3_count = sum(1 for o in symbol_opportunities if o.strategy_id == "S3")
+            s4_count = sum(1 for o in symbol_opportunities if o.strategy_id == "S4")
+            log_event("STRATEGY_EVALUATION", symbol=symbol, S3_signals=s3_count, S4_signals=s4_count)
+            all_new_opportunities.extend(symbol_opportunities)
 
             recorder.record_scan(symbol, len(batch.candles))
             symbols_actually_scanned.append(symbol)
             total_candles += len(batch.candles)
-            print(f"[{symbol}] candles={len(batch.candles)} opportunities={len(all_new_opportunities)}")
+            print(f"[{symbol}] candles={len(batch.candles)} opportunities={len(symbol_opportunities)}")
 
         decisions = decision_engine.on_new_opportunities(all_new_opportunities)
         for d in decisions:
             recorder.record_decision(d)
         approved = [d for d in decisions if d.verdict == "EXECUTE"]
+        if decisions:
+            log_event("ITQS_IOS", highest_itqs=max((d.opportunity.itqs for d in decisions), default=None),
+                      highest_ios=max((d.ios for d in decisions), default=None))
+        log_event("DECISION_ENGINE", approved=len(approved), rejected=len(decisions) - len(approved),
+                  total_opportunities=len(decisions))
         print(f"Decisions: {len(decisions)} total, {len(approved)} approved.")
 
         skipped = 0
@@ -168,6 +195,9 @@ def main():
             signals_detected=len(decisions), approved=len(approved), rejected=len(decisions) - len(approved),
             notifications_sent=sent, memory_mb=memory_mb,
         )
+        log_event("STATE_WRITE", status=workflow_status, run_id=recorder.run_id,
+                  activity_file=str(recorder._path_for(nigeria_today())),
+                  runtime_s=round(time.perf_counter() - start, 2))
 
 
 if __name__ == "__main__":
