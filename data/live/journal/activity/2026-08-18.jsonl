@@ -46,3 +46,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-08-18T09:22:03.890375+00:00", "run_id": "32120867095"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-08-18T09:22:31.168919+00:00", "run_id": "32120867095"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 237.02, "symbols_scanned": ["AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 480, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 144.7, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-18T09:22:31.169442+00:00", "run_id": "32120867095"}
+{"type": "feed_error", "symbol": "EURUSD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/07/18/08h_ticks.bi5: <urlopen error [Errno 104] Connection reset by peer>", "ts": "2026-08-18T10:52:37.450190+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 60, "ts": "2026-08-18T10:54:41.453079+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-08-18T10:55:13.677964+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-08-18T10:55:41.697339+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-08-18T10:56:03.890105+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-08-18T10:56:29.894710+00:00", "run_id": "32128855564"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-08-18T10:56:47.438525+00:00", "run_id": "32128855564"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 271.1, "symbols_scanned": ["GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 660, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 144.3, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-18T10:56:47.439070+00:00", "run_id": "32128855564"}
