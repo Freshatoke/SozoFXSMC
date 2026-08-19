@@ -22,3 +22,11 @@
 {"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy poll failed for USDCAD: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDCAD/2026/07/19/04h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-08-19T05:04:50.851004+00:00", "run_id": "32218018078"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-08-19T05:05:06.665410+00:00", "run_id": "32218018078"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 54.0, "symbols_scanned": ["NZDUSD"], "candles_processed": 60, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 140.7, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-19T05:05:06.666065+00:00", "run_id": "32218018078"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 60, "ts": "2026-08-19T06:03:10.835571+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 120, "ts": "2026-08-19T06:05:06.152600+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-08-19T06:06:41.414072+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-08-19T06:06:51.020374+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-08-19T06:06:55.850524+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-08-19T06:06:58.438565+00:00", "run_id": "32221687338"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-08-19T06:07:06.893616+00:00", "run_id": "32221687338"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 308.51, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 720, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 144.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-19T06:07:06.894048+00:00", "run_id": "32221687338"}
