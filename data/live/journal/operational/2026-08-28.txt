@@ -1,0 +1,22 @@
+2026-08-28
+
+01:52
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: AUDUSD
+feed error: NZDUSD
+--------------------------------
+22:52
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
