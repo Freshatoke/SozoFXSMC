@@ -362,3 +362,14 @@ Cumulative operational history, one section per trading day. Generated automatic
 
 **Lessons / recommendations:**
 - Verify data feed stability -- 35 feed error(s) recorded today.
+
+## 2026-08-27
+
+**Key observations:**
+- No markets were scanned today -- no activity to observe.
+
+**Detected anomalies:**
+- Drift detection requires >= 7 days of prior history; only 6 available. No drift claims made.
+
+**Lessons / recommendations:**
+- No operational concerns flagged today.
