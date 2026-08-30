@@ -356,3 +356,11 @@
 {"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/07/30/03h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-08-30T05:36:27.300861+00:00", "run_id": "33294979921"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:37:15.536247+00:00", "run_id": "33294979921"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 163.93, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 135.7, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:37:15.536764+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 0, "ts": "2026-08-30T05:43:36.213339+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 0, "ts": "2026-08-30T05:43:59.976273+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 0, "ts": "2026-08-30T05:44:17.891290+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 0, "ts": "2026-08-30T05:44:21.731741+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 0, "ts": "2026-08-30T05:44:24.763134+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 0, "ts": "2026-08-30T05:44:29.300541+00:00", "run_id": "33295297897"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:44:52.392817+00:00", "run_id": "33295297897"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 99.33, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 136.1, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:44:52.393314+00:00", "run_id": "33295297897"}
