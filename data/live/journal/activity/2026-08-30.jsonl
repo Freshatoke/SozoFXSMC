@@ -324,3 +324,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 0, "ts": "2026-08-30T05:02:08.825780+00:00", "run_id": "33293653729"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:02:28.817758+00:00", "run_id": "33293653729"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 206.66, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 136.1, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:02:28.818480+00:00", "run_id": "33293653729"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 0, "ts": "2026-08-30T05:08:56.003372+00:00", "run_id": "33293996390"}
+{"type": "feed_error", "symbol": "GBPUSD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/07/30/03h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-08-30T05:08:57.054102+00:00", "run_id": "33293996390"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 0, "ts": "2026-08-30T05:09:34.918209+00:00", "run_id": "33293996390"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 0, "ts": "2026-08-30T05:09:52.587556+00:00", "run_id": "33293996390"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 0, "ts": "2026-08-30T05:11:13.189496+00:00", "run_id": "33293996390"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 0, "ts": "2026-08-30T05:13:16.124759+00:00", "run_id": "33293996390"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:14:36.696391+00:00", "run_id": "33293996390"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 398.14, "symbols_scanned": ["EURUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 136.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:14:36.697007+00:00", "run_id": "33293996390"}
