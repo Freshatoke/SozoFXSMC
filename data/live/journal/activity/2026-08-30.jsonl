@@ -348,3 +348,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 0, "ts": "2026-08-30T05:27:46.380625+00:00", "run_id": "33294657826"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:28:00.768561+00:00", "run_id": "33294657826"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 133.03, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 135.9, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:28:00.769135+00:00", "run_id": "33294657826"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 0, "ts": "2026-08-30T05:34:53.877866+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 0, "ts": "2026-08-30T05:35:13.958028+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 0, "ts": "2026-08-30T05:35:31.250232+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 0, "ts": "2026-08-30T05:35:56.457519+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 0, "ts": "2026-08-30T05:36:26.320911+00:00", "run_id": "33294979921"}
+{"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/07/30/03h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-08-30T05:36:27.300861+00:00", "run_id": "33294979921"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 0, "ts": "2026-08-30T05:37:15.536247+00:00", "run_id": "33294979921"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 163.93, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "NZDUSD"], "candles_processed": 0, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 135.7, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-30T05:37:15.536764+00:00", "run_id": "33294979921"}
