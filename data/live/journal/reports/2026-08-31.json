@@ -1,0 +1,108 @@
+{
+  "date": "2026-08-31",
+  "generated_at": "2026-08-31 21:02:31.335496+00:00",
+  "markets_scanned": [
+    "AUDUSD",
+    "EURUSD",
+    "GBPUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+  ],
+  "candles_processed": 66068,
+  "signals_detected": 15,
+  "approved_opportunities": 10,
+  "rejected_opportunities": 5,
+  "open_paper_trades": null,
+  "closed_paper_trades": null,
+  "wins": null,
+  "losses": null,
+  "win_rate": null,
+  "expectancy": null,
+  "profit_factor": null,
+  "highest_ios": NaN,
+  "highest_itqs": 62.77,
+  "best_strategy": "S4",
+  "best_strategy_basis": "most approved opportunities today",
+  "best_symbol": "GBPUSD",
+  "most_common_rejection_reason": "Other",
+  "rejection_reason_breakdown": {
+    "Other": 5
+  },
+  "feed_errors": 415,
+  "no_paper_broker_data": true,
+  "ios_values": [
+    NaN,
+    69.19,
+    73.19,
+    NaN,
+    NaN,
+    67.19,
+    NaN,
+    69.19,
+    73.19,
+    NaN,
+    NaN,
+    73.19,
+    NaN,
+    NaN,
+    67.19
+  ],
+  "itqs_values": [
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77,
+    62.77
+  ],
+  "strategy_counts": {
+    "S4": 10
+  },
+  "symbol_counts": {
+    "USDCAD": 2,
+    "NZDUSD": 2,
+    "GBPUSD": 6
+  },
+  "session_counts": {
+    "sydney": 15
+  },
+  "strategy_avg_ios": {
+    "S4": NaN
+  },
+  "symbol_signal_counts": {
+    "USDCAD": 5,
+    "NZDUSD": 4,
+    "GBPUSD": 6
+  },
+  "symbol_approval_rate": {
+    "USDCAD": 0.4,
+    "NZDUSD": 0.5,
+    "GBPUSD": 1.0
+  },
+  "average_ios": NaN,
+  "notifications_sent": 4,
+  "total_scans": 149,
+  "successful_scans": 149,
+  "failed_scans": 0,
+  "scans_without_summary": 0,
+  "expected_scans": 263,
+  "completed_scans": 149,
+  "missed_scans": 114,
+  "average_runtime_seconds": 179.32,
+  "average_memory_mb": 143.5,
+  "provider_uptime_pct": 100.0,
+  "download_failures": 415,
+  "data_quality_warnings": 0,
+  "reconnect_count": null
+}
