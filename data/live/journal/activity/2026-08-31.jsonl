@@ -801,3 +801,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-08-31T13:26:27.610320+00:00", "run_id": "33396932424"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-08-31T13:26:29.075267+00:00", "run_id": "33396932424"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 9.81, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 840, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 149.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-31T13:26:29.075888+00:00", "run_id": "33396932424"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 120, "ts": "2026-08-31T13:35:53.139539+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 60, "ts": "2026-08-31T13:37:07.052452+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-08-31T13:37:34.417476+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 60, "ts": "2026-08-31T13:38:48.917194+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 60, "ts": "2026-08-31T13:39:53.448773+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 60, "ts": "2026-08-31T13:40:24.272277+00:00", "run_id": "33397738324"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-08-31T13:40:36.736440+00:00", "run_id": "33397738324"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 321.59, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 540, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 150.1, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-31T13:40:36.737013+00:00", "run_id": "33397738324"}
