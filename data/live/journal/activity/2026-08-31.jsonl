@@ -114,3 +114,17 @@
 {"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-08-31T01:07:37.136825+00:00", "run_id": "33346299103"}
 {"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-08-31T01:07:37.469327+00:00", "run_id": "33346299103"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 338.62, "symbols_scanned": ["AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 420, "signals_detected": 2, "approved": 2, "rejected": 0, "notifications_sent": 2, "memory_mb": 147.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-31T01:07:37.469856+00:00", "run_id": "33346299103"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 120, "ts": "2026-08-31T01:10:38.397971+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 120, "ts": "2026-08-31T01:10:52.665213+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 60, "ts": "2026-08-31T01:12:07.780882+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-08-31T01:13:16.022181+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-08-31T01:13:47.494113+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-08-31T01:14:46.203638+00:00", "run_id": "33346751847"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-08-31T01:15:37.558119+00:00", "run_id": "33346751847"}
+{"type": "decision", "opportunity_id": "S4_GBPUSD_M1_20260831T000300_1", "symbol": "GBPUSD", "strategy_id": "S4", "verdict": "EXECUTE", "ios": 73.19, "itqs": 62.77, "reasons_against": [], "session": "sydney", "ts": "2026-08-31T01:15:37.558599+00:00", "run_id": "33346751847"}
+{"type": "decision", "opportunity_id": "S4_GBPUSD_M1_20260831T002800_1", "symbol": "GBPUSD", "strategy_id": "S4", "verdict": "EXECUTE", "ios": NaN, "itqs": 62.77, "reasons_against": [], "session": "sydney", "ts": "2026-08-31T01:15:37.558743+00:00", "run_id": "33346751847"}
+{"type": "decision", "opportunity_id": "S4_USDCAD_M1_20260831T000800_1", "symbol": "USDCAD", "strategy_id": "S4", "verdict": "IGNORE", "ios": NaN, "itqs": 62.77, "reasons_against": ["Lower IOS than a competing, correlated setup already selected"], "session": "sydney", "ts": "2026-08-31T01:15:37.558861+00:00", "run_id": "33346751847"}
+{"type": "decision", "opportunity_id": "S4_NZDUSD_M1_20260831T001100_1", "symbol": "NZDUSD", "strategy_id": "S4", "verdict": "IGNORE", "ios": 67.19, "itqs": 62.77, "reasons_against": ["Lower IOS than a competing, correlated setup already selected"], "session": "sydney", "ts": "2026-08-31T01:15:37.558972+00:00", "run_id": "33346751847"}
+{"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-08-31T01:15:37.945561+00:00", "run_id": "33346751847"}
+{"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-08-31T01:15:38.278507+00:00", "run_id": "33346751847"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 306.25, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 780, "signals_detected": 4, "approved": 2, "rejected": 2, "notifications_sent": 2, "memory_mb": 149.3, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-08-31T01:15:38.279117+00:00", "run_id": "33346751847"}
