@@ -1,0 +1,992 @@
+2026-09-01
+
+00:06
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+00:16
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+00:24
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+00:33
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: USDCAD
+--------------------------------
+00:41
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+0 signals
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+00:50
+EURUSD scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+--------------------------------
+00:58
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+01:22
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+01:43
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+0 signals
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+01:58
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+--------------------------------
+02:10
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+02:23
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+02:34
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+02:46
+EURUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+02:56
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+03:09
+EURUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+03:22
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+03:33
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+03:47
+EURUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+03:55
+EURUSD scanned
+GBPUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCAD
+--------------------------------
+04:07
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+04:23
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+04:37
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+04:48
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+04:57
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+05:11
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+05:25
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+05:39
+EURUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+--------------------------------
+05:49
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+05:59
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+06:12
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+06:25
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+06:38
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+06:48
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+--------------------------------
+06:57
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+07:14
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+07:35
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+07:50
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+08:01
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCAD scanned
+0 signals
+feed error: USDCHF
+feed error: NZDUSD
+--------------------------------
+08:17
+EURUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+--------------------------------
+08:31
+EURUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+08:45
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: USDCAD
+--------------------------------
+08:55
+USDJPY scanned
+USDCAD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: AUDUSD
+feed error: USDCHF
+feed error: NZDUSD
+--------------------------------
+09:08
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+09:25
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+09:40
+EURUSD scanned
+GBPUSD scanned
+AUDUSD scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: USDJPY
+feed error: USDCHF
+--------------------------------
+09:52
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+10:01
+EURUSD scanned
+GBPUSD scanned
+NZDUSD scanned
+0 signals
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+10:18
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+10:33
+EURUSD scanned
+AUDUSD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+10:47
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+10:57
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+11:11
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+11:30
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+11:44
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+11:55
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+12:06
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+12:21
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+12:33
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+12:44
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+--------------------------------
+12:55
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+13:06
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+13:27
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+13:44
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+13:58
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCAD scanned
+0 signals
+feed error: USDCHF
+feed error: NZDUSD
+--------------------------------
+14:12
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+0 signals
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+14:27
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+14:41
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+14:52
+EURUSD scanned
+GBPUSD scanned
+NZDUSD scanned
+0 signals
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+15:01
+AUDUSD scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: USDCHF
+--------------------------------
+15:18
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+15:33
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+--------------------------------
+15:51
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+16:00
+GBPUSD scanned
+USDJPY scanned
+USDCHF scanned
+0 signals
+feed error: EURUSD
+feed error: AUDUSD
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+16:25
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+16:53
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+0 signals
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+17:33
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+NZDUSD scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+17:54
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+0 signals
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+18:03
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+0 signals
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+18:19
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+18:30
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+--------------------------------
+18:42
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+18:51
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+19:00
+EURUSD scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+--------------------------------
+19:18
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+19:35
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+0 signals
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+19:48
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+19:58
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+20:11
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+USDCAD scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: NZDUSD
+--------------------------------
+20:23
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+20:32
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: NZDUSD
+--------------------------------
+20:41
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: USDCAD
+--------------------------------
+20:51
+EURUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCAD
+--------------------------------
+20:59
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+21:15
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+21:28
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+--------------------------------
+21:41
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+--------------------------------
+21:51
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: AUDUSD
+--------------------------------
+22:00
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
