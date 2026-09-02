@@ -168,3 +168,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-09-02T03:47:28.996309+00:00", "run_id": "33588084152"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-09-02T03:49:14.294362+00:00", "run_id": "33588084152"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 351.27, "symbols_scanned": ["EURUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 599, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 146.5, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-02T03:49:14.294840+00:00", "run_id": "33588084152"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 59, "ts": "2026-09-02T03:53:45.718113+00:00", "run_id": "33588664664"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 120, "ts": "2026-09-02T03:55:15.381007+00:00", "run_id": "33588664664"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-09-02T03:55:45.747785+00:00", "run_id": "33588664664"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-09-02T03:57:25.516460+00:00", "run_id": "33588664664"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 60, "ts": "2026-09-02T03:58:43.421829+00:00", "run_id": "33588664664"}
+{"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy poll failed for USDCAD: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDCAD/2026/08/02/02h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-09-02T03:58:45.715288+00:00", "run_id": "33588664664"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-09-02T03:59:13.019973+00:00", "run_id": "33588664664"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 392.61, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "NZDUSD"], "candles_processed": 539, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 147.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-02T03:59:13.020522+00:00", "run_id": "33588664664"}
