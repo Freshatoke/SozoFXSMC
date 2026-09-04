@@ -46,3 +46,11 @@
 {"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-09-04T19:24:28.233127+00:00", "run_id": "33910447362"}
 {"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-09-04T19:25:11.548756+00:00", "run_id": "33910447362"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 390.94, "symbols_scanned": ["AUDUSD", "USDCAD", "NZDUSD"], "candles_processed": 300, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 143.7, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-04T19:25:11.549248+00:00", "run_id": "33910447362"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 120, "ts": "2026-09-04T21:34:15.488789+00:00", "run_id": "33921633481"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 119, "ts": "2026-09-04T21:34:40.841821+00:00", "run_id": "33921633481"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-09-04T21:35:10.729625+00:00", "run_id": "33921633481"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 117, "ts": "2026-09-04T21:35:50.996345+00:00", "run_id": "33921633481"}
+{"type": "feed_error", "symbol": "USDCHF", "detail": "Dukascopy poll failed for USDCHF: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDCHF/2026/08/04/20h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-09-04T21:36:04.371564+00:00", "run_id": "33921633481"}
+{"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy poll failed for USDCAD: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDCAD/2026/08/04/20h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-09-04T21:36:07.498980+00:00", "run_id": "33921633481"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 60, "ts": "2026-09-04T21:36:26.285303+00:00", "run_id": "33921633481"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 158.15, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD"], "candles_processed": 536, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 144.9, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-04T21:36:26.285880+00:00", "run_id": "33921633481"}
