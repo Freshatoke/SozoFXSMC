@@ -1,0 +1,72 @@
+{
+  "date": "2026-09-09",
+  "generated_at": "2026-09-09 22:50:40.114353+00:00",
+  "markets_scanned": [
+    "AUDUSD",
+    "EURUSD",
+    "GBPUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+  ],
+  "candles_processed": 3860,
+  "signals_detected": 1,
+  "approved_opportunities": 1,
+  "rejected_opportunities": 0,
+  "open_paper_trades": null,
+  "closed_paper_trades": null,
+  "wins": null,
+  "losses": null,
+  "win_rate": null,
+  "expectancy": null,
+  "profit_factor": null,
+  "highest_ios": 73.19,
+  "highest_itqs": 62.77,
+  "best_strategy": "S4",
+  "best_strategy_basis": "most approved opportunities today",
+  "best_symbol": "USDJPY",
+  "most_common_rejection_reason": null,
+  "rejection_reason_breakdown": {},
+  "feed_errors": 13,
+  "no_paper_broker_data": true,
+  "ios_values": [
+    73.19
+  ],
+  "itqs_values": [
+    62.77
+  ],
+  "strategy_counts": {
+    "S4": 1
+  },
+  "symbol_counts": {
+    "USDJPY": 1
+  },
+  "session_counts": {
+    "sydney": 1
+  },
+  "strategy_avg_ios": {
+    "S4": 73.19
+  },
+  "symbol_signal_counts": {
+    "USDJPY": 1
+  },
+  "symbol_approval_rate": {
+    "USDJPY": 1.0
+  },
+  "average_ios": 73.19,
+  "notifications_sent": 1,
+  "total_scans": 7,
+  "successful_scans": 7,
+  "failed_scans": 0,
+  "scans_without_summary": 0,
+  "expected_scans": 261,
+  "completed_scans": 7,
+  "missed_scans": 254,
+  "average_runtime_seconds": 195.67,
+  "average_memory_mb": 148.7,
+  "provider_uptime_pct": 100.0,
+  "download_failures": 13,
+  "data_quality_warnings": 0,
+  "reconnect_count": null
+}
