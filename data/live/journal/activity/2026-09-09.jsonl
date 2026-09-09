@@ -16,3 +16,11 @@
 {"type": "decision", "opportunity_id": "S4_USDJPY_M1_20260909T003200_1", "symbol": "USDJPY", "strategy_id": "S4", "verdict": "EXECUTE", "ios": 73.19, "itqs": 62.77, "reasons_against": [], "session": "sydney", "ts": "2026-09-09T01:33:19.090728+00:00", "run_id": "34299330356"}
 {"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-09-09T01:33:19.596369+00:00", "run_id": "34299330356"}
 {"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 262.62, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD"], "candles_processed": 597, "signals_detected": 1, "approved": 1, "rejected": 0, "notifications_sent": 1, "memory_mb": 155.6, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-09T01:33:19.596929+00:00", "run_id": "34299330356"}
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 120, "ts": "2026-09-09T06:31:00.998537+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 120, "ts": "2026-09-09T06:31:02.464454+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-09-09T06:31:04.141079+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-09-09T06:31:05.406133+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-09-09T06:31:06.998347+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 120, "ts": "2026-09-09T06:31:08.502047+00:00", "run_id": "34319375528"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 120, "ts": "2026-09-09T06:31:10.220865+00:00", "run_id": "34319375528"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 10.67, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 840, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 152.2, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-09T06:31:10.221507+00:00", "run_id": "34319375528"}
