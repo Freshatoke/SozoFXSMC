@@ -1,0 +1,8 @@
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 119, "ts": "2026-09-11T00:30:32.718419+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 120, "ts": "2026-09-11T00:31:59.142729+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 120, "ts": "2026-09-11T00:32:34.160690+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-09-11T00:33:50.265730+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-09-11T00:34:25.165940+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 117, "ts": "2026-09-11T00:34:39.676702+00:00", "run_id": "34546712009"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 119, "ts": "2026-09-11T00:34:53.417291+00:00", "run_id": "34546712009"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 289.96, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 835, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 144.9, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-11T00:34:53.417915+00:00", "run_id": "34546712009"}
