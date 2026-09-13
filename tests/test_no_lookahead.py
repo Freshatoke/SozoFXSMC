@@ -66,3 +66,37 @@ def test_liquidity_as_of_index_matches_truncated_dataframe():
     levels_truncated = detect_liquidity_levels(df_truncated, "TEST", "M1", config=cfg)
 
     pd.testing.assert_frame_equal(levels_cutoff, levels_truncated)
+
+
+def test_fresh_order_block_asof_rejects_ob_before_its_own_displacement_completes():
+    """Task 12.2 regression: `MarketContext.fresh_order_block_asof` used to
+    filter candidate Order Blocks using only `creation_timestamp <=
+    timestamp` (the ORIGIN candle's own timestamp) -- but an Order Block
+    is not identifiable as such until the displacement run that CONFIRMS
+    it has actually completed. Verified against real EURUSD data: this
+    let 25.2% of all S3/S4 signals referencing an Order Block use one
+    whose confirming displacement hadn't happened yet at the signal's own
+    timestamp -- genuine look-ahead bias in production strategy code.
+
+    `_bullish_ob_setup()` (from test_order_blocks.py) appends a single-
+    candle displacement immediately after the OB origin candle: at the
+    ORIGIN candle's own timestamp (before the displacement candle has
+    even occurred), the OB must NOT be visible yet; only once the
+    displacement candle itself has closed does it become knowable."""
+    from src.strategies.context import MarketContext
+    from tests.test_order_blocks import _bullish_ob_setup
+
+    rows, ob_low, ob_high = _bullish_ob_setup()
+    df = make_candles(rows)
+    ctx = MarketContext(symbol="TEST", m1=df)
+
+    origin_ts = df["timestamp"].iloc[20]     # the OB origin (bearish) candle -- displacement has NOT happened yet
+    displacement_ts = df["timestamp"].iloc[21]  # the single-candle displacement's own close
+
+    ob_before_displacement = ctx.fresh_order_block_asof("M1", "bullish", origin_ts)
+    assert ob_before_displacement is None, "an OB must not be visible before its own confirming displacement has completed"
+
+    ob_after_displacement = ctx.fresh_order_block_asof("M1", "bullish", displacement_ts)
+    assert ob_after_displacement is not None
+    assert ob_after_displacement["low"] == ob_low
+    assert ob_after_displacement["high"] == ob_high

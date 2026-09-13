@@ -286,6 +286,28 @@ class MarketContext:
         on candles up to `timestamp` regardless of what the dataset knows
         about later candles.
 
+        LOOK-AHEAD FIX (Task 12.2): an Order Block is not an Order Block
+        until the displacement that CONFIRMS it has actually happened --
+        `creation_timestamp` is the ORIGIN candle's own timestamp (which
+        necessarily precedes or equals the displacement, since the origin
+        candle is the last opposing candle BEFORE the impulse), but the
+        candle itself cannot be identified as an order block using only
+        information available up to its own close; that identification
+        requires the displacement's confirming move to have completed.
+        `bisect_right` on `creation_timestamp` alone therefore let this
+        method return OBs whose `displacement_reference["end_timestamp"]`
+        was AFTER `timestamp` -- i.e. it used information from candles
+        that, at `timestamp`, had not happened yet. Verified against real
+        EURUSD data (Task 12.2's live/batch parity investigation): 25.2%
+        of all S3/S4 signals referencing an Order Block relied on one
+        whose confirming displacement completed strictly after the
+        signal's own timestamp. Every qualifying record here is now also
+        required to have `displacement_reference["end_timestamp"] <=
+        timestamp` -- the additional per-candidate check is O(1) (a dict
+        lookup + comparison) and only runs on records the bisect+backward
+        scan was already visiting, so the O(log n + k) complexity is
+        unchanged.
+
         O(log n + k), same bisect-then-scan-backward pattern as
         `latest_choch_asof` -- `records` is sorted ascending by
         `creation_timestamp` by construction (Order Blocks are created in
@@ -293,13 +315,18 @@ class MarketContext:
         always overwrote `best` with the later-created qualifying record
         (creation_timestamp strictly increases through the list), the
         first qualifying record found walking backward from the
-        `timestamp` cutoff is identical to what the original loop returned.
+        `timestamp` cutoff is identical to what the original loop returned
+        (modulo the look-ahead fix above, which can now skip a record the
+        pre-fix version would have wrongly accepted).
         """
         records = self._ob_records(timeframe)
         idx = bisect.bisect_right(records, timestamp, key=lambda r: r["creation_timestamp"])
         for i in range(idx - 1, -1, -1):
             rec = records[i]
             if rec["direction"] != direction:
+                continue
+            disp_ref = rec.get("displacement_reference")
+            if disp_ref and pd.Timestamp(disp_ref["end_timestamp"]) > timestamp:
                 continue
             touch = rec["first_touch_timestamp"]
             if not rec["_touch_is_null"] and touch <= timestamp:
