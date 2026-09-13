@@ -86,16 +86,42 @@ class IncrementalEngine:
 
         self.registry = ActiveObjectRegistry(symbol, timeframe)
         self.candles_processed = 0
+        # Task 12.3 fix -- swings confirmed BY candle N must not become
+        # eligible for structure/liquidity break-testing until candle N+1.
+        # See this class's process_candle() docstring note below for why.
+        self._pending_swings: list = []
 
     def process_candle(self, candle: Candle) -> "ConfluenceSnapshot":  # noqa: F821
         # 1. Sessions
         self.sessions.update(candle)
 
-        # 2. Swings (may confirm 0, 1 or 2 swings on this candle)
-        new_swings = self.swings.update(candle)
-        for swing in new_swings:
+        # 2. Swings (may confirm 0, 1 or 2 swings on this candle).
+        #
+        # TASK 12.3 FIX: a swing's `confirmed_timestamp` (see
+        # src.structure.swings.detect_swings and this module's
+        # IncrementalSwingTracker) is defined as the CLOSE of the
+        # confirming candle -- i.e. the OPEN of the candle AFTER it. The
+        # batch reference implementation (src.structure.market_structure.
+        # detect_structure_events, src.features.liquidity.detect_liquidity_levels)
+        # gates on `confirmed_timestamp <= candle.timestamp`, which is only
+        # satisfied starting from the candle AFTER the one that confirmed
+        # the swing. Previously this engine called `ingest_swing()`
+        # immediately in the SAME process_candle() call that confirmed the
+        # swing, making it eligible for break-testing one candle EARLY.
+        # That off-by-one changed WHICH swing was `active_high`/`active_low`
+        # on the confirming candle whenever a fresher, higher-index swing
+        # superseded an older still-active one on the very candle it was
+        # confirmed -- causing structure/BOS/CHoCH/liquidity events to be
+        # detected against a different level, on a different candle, than
+        # batch (traced and proven via reports/live_context_parity/ +
+        # docs/TASK_12_3_INCREMENTAL_STRUCTURE_PARITY_REPORT.md). Buffering
+        # newly confirmed swings for one candle before ingesting them
+        # reproduces batch's exact timing.
+        for swing in self._pending_swings:
             self.structure.ingest_swing(swing)
             self.liquidity.ingest_swing(swing)
+        new_swings = self.swings.update(candle)
+        self._pending_swings = new_swings
 
         # 3. BOS / CHoCH
         structure_events_this_candle = self.structure.update(candle)
@@ -176,6 +202,7 @@ class IncrementalEngine:
             "symbol": self.symbol, "timeframe": self.timeframe,
             "interval_seconds": self.interval.total_seconds(),
             "candles_processed": self.candles_processed,
+            "pending_swings": self._pending_swings,
             "swings": self.swings.state_dict(),
             "structure": self.structure.state_dict(),
             "displacement": self.displacement.state_dict(),
@@ -202,6 +229,7 @@ class IncrementalEngine:
             interval=pd.Timedelta(seconds=state["interval_seconds"]), event_bus=event_bus,
         )
         engine.candles_processed = state["candles_processed"]
+        engine._pending_swings = state.get("pending_swings", [])
         engine.swings.restore(state["swings"])
         engine.structure.restore(state["structure"])
         engine.displacement.restore(state["displacement"])

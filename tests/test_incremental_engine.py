@@ -74,6 +74,61 @@ def test_incremental_structure_events_match_batch():
         assert i["break_candle_timestamp"] == b.break_candle_timestamp
 
 
+def test_a_fresher_swing_confirmed_on_the_break_candle_does_not_preempt_the_break():
+    """Task 12.3 regression.
+
+    `confirmed_timestamp` (src.structure.swings.detect_swings) is defined
+    as the CLOSE of the confirming candle -- i.e. the swing only becomes
+    knowable/eligible starting the candle AFTER the one that confirms it.
+    `detect_structure_events` (the batch reference) gates on exactly that:
+    `confirmed_timestamp <= candle.timestamp` is first satisfied one
+    candle after confirmation.
+
+    `IncrementalEngine.process_candle` previously called
+    `structure.ingest_swing()`/`liquidity.ingest_swing()` on new swings
+    IMMEDIATELY, in the SAME `process_candle()` call that confirmed them --
+    one candle too early. Whenever a fresh, higher swing high/low was
+    confirmed on the same candle an OLDER still-active level should have
+    been broken, that premature ingestion silently swapped `active_high`/
+    `active_low` to the fresh (unbroken-by-this-candle) level first,
+    causing the older level's break to be missed entirely -- not merely
+    mislabeled.
+
+    This scenario: an early swing high at 1.020 stays active and unbroken;
+    a second, higher swing high (1.060) is confirmed later, and its own
+    confirming candle closes at 1.030 -- above the OLD level (1.020) but
+    below the NEW one (1.060). Batch fires a bullish BOS on that candle,
+    breaking 1.020. The old buggy incremental engine fired nothing there
+    (it had already swapped to the 1.060 level, which 1.030 doesn't
+    break); the fixed engine must match batch exactly."""
+    rows = [
+        (1.000, 1.000, 0.995, 1.000),   # 0 filler
+        (1.000, 1.010, 0.995, 1.005),   # 1 left-of-H1
+        (1.005, 1.020, 1.000, 1.015),   # 2 H1 peak (high=1.020)
+        (1.015, 1.015, 1.005, 1.010),   # 3 right-of-H1 / confirms H1
+        (1.010, 1.018, 1.005, 1.012),   # 4 left-of-H2 (close=1.012 < H1, no break yet)
+        (1.012, 1.060, 1.010, 1.015),   # 5 H2 peak (high=1.060), close=1.015 still < H1
+        (1.030, 1.045, 1.025, 1.030),   # 6 right-of-H2 / confirms H2; close=1.030 > H1(1.020)
+        (1.030, 1.035, 1.025, 1.030),   # 7 filler
+    ]
+    df = make_candles(rows)
+    swing_cfg = SwingConfig(left=1, right=1)
+    struct_cfg = StructureConfig(swing=swing_cfg)
+
+    batch_swings = detect_swings(df, config=swing_cfg, timeframe_label="M1")
+    batch_events = detect_structure_events(df, batch_swings, symbol="TEST", timeframe="M1", config=struct_cfg)
+    assert len(batch_events) == 1
+    assert batch_events.iloc[0]["break_candle_timestamp"] == df["timestamp"].iloc[6]
+    assert batch_events.iloc[0]["broken_level"] == 1.02
+
+    engine = _run_engine(df, structure_config=struct_cfg, swing_config=swing_cfg)
+    incremental_events = engine.structure.events
+    assert len(incremental_events) == 1
+    assert incremental_events[0]["break_candle_timestamp"] == df["timestamp"].iloc[6]
+    assert incremental_events[0]["broken_level"] == 1.02
+    assert incremental_events[0]["event_type"] == batch_events.iloc[0]["event_type"] == "BOS"
+
+
 def test_incremental_order_blocks_match_batch():
     rows, ob_low, ob_high = _bullish_scenario_rows()
     df = make_candles(rows)
