@@ -78,7 +78,24 @@ class IncrementalSwingTracker:
         self.event_bus = event_bus
         self._window: deque[Candle] = deque(maxlen=config.left + config.right + 1)
         self.confirmed_swings: list[dict] = []  # full history retained, never deleted
+        # Task 12.4: bounded, incrementally-maintained "most recent 50"
+        # per side -- the only thing any actual consumer (registry.refresh(),
+        # the only reader of this data) needs. Before this, refresh() rebuilt
+        # this same view by rescanning the ENTIRE (unbounded, ever-growing)
+        # confirmed_swings list every candle, making a multi-month backfill
+        # O(n^2). Nothing was ever pruned from confirmed_swings itself --
+        # only the read path changed.
+        self._recent_highs: deque = deque(maxlen=50)
+        self._recent_lows: deque = deque(maxlen=50)
         self._seq = 0
+
+    @property
+    def recent_highs(self) -> list[dict]:
+        return list(self._recent_highs)
+
+    @property
+    def recent_lows(self) -> list[dict]:
+        return list(self._recent_lows)
 
     def update(self, candle: Candle) -> list[dict]:
         self._window.append(candle)
@@ -108,6 +125,7 @@ class IncrementalSwingTracker:
                 "candle_index": center.index,
             }
             self.confirmed_swings.append(swing)
+            self._recent_highs.append(swing)
             new_swings.append(swing)
             if self.event_bus:
                 self.event_bus.publish(EventType.SWING_CONFIRMED, candle.timestamp, swing)
@@ -124,6 +142,7 @@ class IncrementalSwingTracker:
                 "candle_index": center.index,
             }
             self.confirmed_swings.append(swing)
+            self._recent_lows.append(swing)
             new_swings.append(swing)
             if self.event_bus:
                 self.event_bus.publish(EventType.SWING_CONFIRMED, candle.timestamp, swing)
@@ -134,6 +153,15 @@ class IncrementalSwingTracker:
         return {"window": [asdict(c) for c in self._window], "confirmed_swings": self.confirmed_swings, "seq": self._seq}
 
     def restore(self, state: dict) -> None:
+        # recent_highs/recent_lows are a derived, bounded view -- rebuilt
+        # once here (an O(min(n, 50)) tail scan, not a per-candle cost)
+        # rather than persisted separately.
+        self._recent_highs = deque(
+            (s for s in state["confirmed_swings"] if s["swing_type"] == "high"), maxlen=50
+        )
+        self._recent_lows = deque(
+            (s for s in state["confirmed_swings"] if s["swing_type"] == "low"), maxlen=50
+        )
         self._window = deque((Candle(**c) for c in state["window"]), maxlen=self.config.left + self.config.right + 1)
         self.confirmed_swings = state["confirmed_swings"]
         self._seq = state["seq"]
@@ -573,8 +601,20 @@ class IncrementalOrderBlockTracker:
         `update()` above, so handing out live references would let a
         confluence snapshot silently change after the fact once more
         candles are processed -- exactly the immutability bug this task's
-        tests guard against."""
-        return [dict(ob) for ob in self._objects.values() if ob["current_state"] in ("ACTIVE", "PARTIALLY_MITIGATED")]
+        tests guard against.
+
+        Task 12.4: iterates `self._active_ids` (bounded -- only entries not
+        yet ARCHIVED, maintained incrementally by `update()` above), not
+        `self._objects.values()` (every OB ever created, never pruned).
+        Scanning the latter every candle made this call, and therefore the
+        registry refresh that calls it every candle, O(all-time-created)
+        instead of O(currently-active) -- see
+        docs/TASK_12_4_LIQUIDITY_PERFORMANCE_REPORT.md. `_active_ids` still
+        includes FULLY_MITIGATED/INVALIDATED objects pending archive, so
+        the same state filter as before is kept; it now runs over a small,
+        bounded candidate set instead of the full history."""
+        return [dict(self._objects[ob_id]) for ob_id in self._active_ids
+                if self._objects[ob_id]["current_state"] in ("ACTIVE", "PARTIALLY_MITIGATED")]
 
     def state_dict(self) -> dict:
         return {
@@ -693,8 +733,15 @@ class IncrementalFVGTracker:
 
     def active_fvgs(self) -> list[dict]:
         """Returns SHALLOW COPIES -- see IncrementalOrderBlockTracker.active_order_blocks
-        for why copying (not returning live references) is required here."""
-        return [dict(f) for f in self._objects.values() if f["active_status"] in ("ACTIVE", "PARTIALLY_FILLED")]
+        for why copying (not returning live references) is required here.
+
+        Task 12.4: iterates the bounded `self._active_ids` (maintained by
+        `update()`, discarded exactly when a FVG leaves ACTIVE/PARTIALLY_FILLED)
+        instead of rescanning `self._objects.values()` (every FVG ever
+        created) every candle -- same O(all-time) -> O(active) fix as
+        IncrementalOrderBlockTracker.active_order_blocks."""
+        return [dict(self._objects[fvg_id]) for fvg_id in self._active_ids
+                if self._objects[fvg_id]["active_status"] in ("ACTIVE", "PARTIALLY_FILLED")]
 
     def state_dict(self) -> dict:
         return {
@@ -813,8 +860,15 @@ class IncrementalLiquidityTracker:
 
     def active_levels(self) -> list[dict]:
         """Returns SHALLOW COPIES -- see IncrementalOrderBlockTracker.active_order_blocks
-        for why copying (not returning live references) is required here."""
-        return [dict(l) for l in self._objects.values() if l["state"] == "ACTIVE"]
+        for why copying (not returning live references) is required here.
+
+        Task 12.4: iterates the bounded `self._active_ids` (which also
+        holds SWEPT-not-yet-ARCHIVED levels, so the `state == "ACTIVE"`
+        filter is still needed) instead of rescanning `self._objects.values()`
+        (every level ever created) every candle -- same O(all-time) ->
+        O(active_ids) fix as IncrementalOrderBlockTracker.active_order_blocks."""
+        return [dict(self._objects[liq_id]) for liq_id in self._active_ids
+                if self._objects[liq_id]["state"] == "ACTIVE"]
 
     def state_dict(self) -> dict:
         return {

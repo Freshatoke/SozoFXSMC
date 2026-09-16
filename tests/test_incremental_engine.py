@@ -15,7 +15,7 @@ from src.structure.swings import detect_swings
 from src.structure.market_structure import detect_structure_events
 from src.features.order_blocks import detect_order_blocks
 from src.features.fvg import detect_fvgs
-from tests.helpers import make_candles
+from tests.helpers import make_candles, make_multi_day_m1
 from tests.test_displacement import _quiet_rows
 from tests.test_order_blocks import _bullish_ob_setup
 
@@ -306,6 +306,56 @@ def test_past_snapshots_are_immutable_once_produced():
     engine.process_dataframe(df.iloc[len(df) - 1:].reset_index(drop=True))
 
     assert frozen_snapshot_dict == snapshots_partial[-1].to_dict()
+
+
+# ---------------------------------------------------------------------------
+# Task 12.4: active-object accessor performance fix preserves correctness
+# ---------------------------------------------------------------------------
+
+
+def test_active_accessors_match_a_naive_full_scan_after_the_active_ids_optimization():
+    """Task 12.4 made active_order_blocks()/active_fvgs()/active_levels()
+    iterate each tracker's already-maintained, bounded `_active_ids` set
+    instead of rescanning the full, ever-growing `_objects` dict on every
+    call. This proves that optimization didn't change the result: it must
+    still equal what a naive full scan with the same filter would produce,
+    over a stream long enough to create, mitigate, and archive several
+    objects of each kind."""
+    df = make_multi_day_m1(num_days=15, seed=3)
+    engine = _run_engine(df)
+
+    ob = engine.order_blocks
+    naive_obs = [dict(o) for o in ob._objects.values() if o["current_state"] in ("ACTIVE", "PARTIALLY_MITIGATED")]
+    assert len(ob._objects) > len(ob._active_ids) > 0, "scenario must actually exercise both live and archived OBs"
+    assert sorted(o["ob_id"] for o in ob.active_order_blocks()) == sorted(o["ob_id"] for o in naive_obs)
+
+    fvg = engine.fvgs
+    naive_fvgs = [dict(f) for f in fvg._objects.values() if f["active_status"] in ("ACTIVE", "PARTIALLY_FILLED")]
+    assert len(fvg._objects) > 0
+    assert sorted(f["fvg_id"] for f in fvg.active_fvgs()) == sorted(f["fvg_id"] for f in naive_fvgs)
+
+    liq = engine.liquidity
+    naive_liq = [dict(l) for l in liq._objects.values() if l["state"] == "ACTIVE"]
+    assert len(liq._objects) > 0
+    assert sorted(l["liquidity_id"] for l in liq.active_levels()) == sorted(l["liquidity_id"] for l in naive_liq)
+
+
+def test_registry_recent_swings_match_a_naive_full_scan_after_the_bounding_optimization():
+    """Task 12.4 made ActiveObjectRegistry.refresh() read swings.recent_highs/
+    recent_lows (a bounded, incrementally-maintained deque) instead of
+    rescanning the full confirmed_swings list every candle. The result must
+    still equal 'the last 50 confirmed swings of each type,' exactly what
+    the old full-scan-then-slice code computed."""
+    df = make_multi_day_m1(num_days=15, seed=3)
+    engine = _run_engine(df)
+
+    all_swings = engine.swings.confirmed_swings
+    naive_highs = [s for s in all_swings if s["swing_type"] == "high"][-50:]
+    naive_lows = [s for s in all_swings if s["swing_type"] == "low"][-50:]
+
+    assert len(all_swings) > 100, "scenario must confirm enough swings to exercise the [-50:] bound"
+    assert engine.registry.active_swing_highs == naive_highs
+    assert engine.registry.active_swing_lows == naive_lows
 
 
 def test_engine_never_uses_future_candle_data():

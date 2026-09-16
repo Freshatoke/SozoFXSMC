@@ -116,9 +116,16 @@ class ActiveObjectRegistry:
         swing_tracker, structure_tracker, ob_tracker, fvg_tracker,
         liquidity_tracker, session_tracker, reference_tracker,
     ) -> None:
-        all_swings = swing_tracker.confirmed_swings
-        self.active_swing_highs = [s for s in all_swings if s["swing_type"] == "high"][-50:]
-        self.active_swing_lows = [s for s in all_swings if s["swing_type"] == "low"][-50:]
+        # Task 12.4: swing_tracker already maintains these as a bounded,
+        # incrementally-updated deque (see IncrementalSwingTracker) -- no
+        # consumer of this registry (see class docstring) reads more than
+        # "the most recent swings," so reading the bounded view directly
+        # replaces what used to be a full rescan of the EVER-GROWING
+        # confirmed_swings list on every single candle (confirmed O(n)-
+        # per-candle, i.e. O(n^2) over a backfill -- see
+        # docs/TASK_12_4_LIQUIDITY_PERFORMANCE_REPORT.md).
+        self.active_swing_highs = swing_tracker.recent_highs
+        self.active_swing_lows = swing_tracker.recent_lows
 
         active_obs = ob_tracker.active_order_blocks()
         self.active_bullish_order_blocks = [ob for ob in active_obs if ob["direction"] == "bullish"]
