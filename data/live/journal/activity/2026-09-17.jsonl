@@ -1,0 +1,8 @@
+{"type": "feed_error", "symbol": "EURUSD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/08/16/21h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-09-16T23:49:59.484870+00:00", "run_id": "35163954765"}
+{"type": "feed_error", "symbol": "GBPUSD", "detail": "Dukascopy probe failed: Failed to download https://datafeed.dukascopy.com/datafeed/EURUSD/2026/08/16/21h_ticks.bi5: HTTP Error 503: Service Unavailable", "ts": "2026-09-16T23:50:30.437502+00:00", "run_id": "35163954765"}
+{"type": "feed_error", "symbol": "USDJPY", "detail": "Dukascopy poll failed for USDJPY: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDJPY/2026/08/16/22h_ticks.bi5: The read operation timed out", "ts": "2026-09-16T23:51:52.535149+00:00", "run_id": "35163954765"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-09-16T23:52:10.794192+00:00", "run_id": "35163954765"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 115, "ts": "2026-09-16T23:52:47.298908+00:00", "run_id": "35163954765"}
+{"type": "scan", "symbol": "USDCAD", "candles_processed": 114, "ts": "2026-09-16T23:53:17.848406+00:00", "run_id": "35163954765"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 117, "ts": "2026-09-16T23:53:45.289889+00:00", "run_id": "35163954765"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 243.1, "symbols_scanned": ["AUDUSD", "USDCHF", "USDCAD", "NZDUSD"], "candles_processed": 466, "signals_detected": 0, "approved": 0, "rejected": 0, "notifications_sent": 0, "memory_mb": 143.8, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-09-16T23:53:45.290384+00:00", "run_id": "35163954765"}
