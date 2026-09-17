@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-17",
+  "generated_at": "2026-09-17 23:16:30.797994+00:00",
+  "markets_scanned": [
+    "AUDUSD",
+    "EURUSD",
+    "GBPUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+  ],
+  "candles_processed": 2381,
+  "signals_detected": 2,
+  "approved_opportunities": 1,
+  "rejected_opportunities": 1,
+  "open_paper_trades": null,
+  "closed_paper_trades": null,
+  "wins": null,
+  "losses": null,
+  "win_rate": null,
+  "expectancy": null,
+  "profit_factor": null,
+  "highest_ios": NaN,
+  "highest_itqs": 62.77,
+  "best_strategy": "S4",
+  "best_strategy_basis": "most approved opportunities today",
+  "best_symbol": "EURUSD",
+  "most_common_rejection_reason": "Other",
+  "rejection_reason_breakdown": {
+    "Other": 1
+  },
+  "feed_errors": 27,
+  "no_paper_broker_data": true,
+  "ios_values": [
+    NaN,
+    71.19
+  ],
+  "itqs_values": [
+    62.77,
+    62.77
+  ],
+  "strategy_counts": {
+    "S4": 1
+  },
+  "symbol_counts": {
+    "EURUSD": 1
+  },
+  "session_counts": {
+    "sydney": 2
+  },
+  "strategy_avg_ios": {
+    "S4": NaN
+  },
+  "symbol_signal_counts": {
+    "EURUSD": 1,
+    "GBPUSD": 1
+  },
+  "symbol_approval_rate": {
+    "EURUSD": 1.0,
+    "GBPUSD": 0.0
+  },
+  "average_ios": NaN,
+  "notifications_sent": 1,
+  "total_scans": 7,
+  "successful_scans": 7,
+  "failed_scans": 0,
+  "scans_without_summary": 0,
+  "expected_scans": 278,
+  "completed_scans": 7,
+  "missed_scans": 271,
+  "average_runtime_seconds": 193.93,
+  "average_memory_mb": 143.2,
+  "provider_uptime_pct": 100.0,
+  "download_failures": 27,
+  "data_quality_warnings": 0,
+  "reconnect_count": null
+}
