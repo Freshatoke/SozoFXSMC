@@ -1,0 +1,62 @@
+2026-09-21
+
+00:31
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+USDCHF scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+02:31
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+08:00
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+14:54
+EURUSD scanned
+GBPUSD scanned
+AUDUSD scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: USDJPY
+feed error: USDCAD
+--------------------------------
+19:59
+EURUSD scanned
+USDJPY scanned
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+NZDUSD scanned
+0 signals
+feed error: GBPUSD
+--------------------------------
+23:31
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+USDCHF scanned
+NZDUSD scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCAD
+--------------------------------
