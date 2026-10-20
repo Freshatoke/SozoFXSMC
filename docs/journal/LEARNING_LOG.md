@@ -1233,3 +1233,22 @@ Cumulative operational history, one section per trading day. Generated automatic
 
 **Lessons / recommendations:**
 - Verify data feed stability -- 14 feed error(s) recorded today.
+
+## 2026-10-20
+
+**Key observations:**
+- Scanned 7 market(s) (AUDUSD, EURUSD, GBPUSD, NZDUSD, USDCAD, USDCHF, USDJPY), processing 2931 candles.
+- 1 opportunity(ies) reached the decision engine: 1 approved, 0 rejected.
+- Strategy S4 dominated today's approved opportunities (most approved opportunities today).
+- AUDUSD produced the most approved opportunities today.
+- Highest IOS observed today: 73.19.
+- 12 provider download failure(s) occurred today (provider uptime: 100.0%).
+- 253 of 259 expected scans did not complete today.
+- No paper broker activity recorded today -- this deployment (GitHub Actions scan-only, per docs/GITHUB_ACTIONS_SETUP_GUIDE.md) does not run a paper broker. Win rate/expectancy/profit factor are not applicable until a continuously running LiveOrchestrator is deployed.
+- 12 data feed error(s) occurred today.
+
+**Detected anomalies:**
+- None.
+
+**Lessons / recommendations:**
+- Verify data feed stability -- 12 feed error(s) recorded today.
