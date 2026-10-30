@@ -1,0 +1,42 @@
+2026-10-29
+
+02:14
+EURUSD scanned
+GBPUSD scanned
+USDJPY scanned
+NZDUSD scanned
+0 signals
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
+08:08
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+feed error: NZDUSD
+--------------------------------
+15:13
+AUDUSD scanned
+USDCHF scanned
+USDCAD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: NZDUSD
+--------------------------------
+20:39
+NZDUSD scanned
+0 signals
+feed error: EURUSD
+feed error: GBPUSD
+feed error: USDJPY
+feed error: AUDUSD
+feed error: USDCHF
+feed error: USDCAD
+--------------------------------
