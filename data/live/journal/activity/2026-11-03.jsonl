@@ -1,0 +1,10 @@
+{"type": "scan", "symbol": "EURUSD", "candles_processed": 119, "ts": "2026-11-03T01:47:07.871508+00:00", "run_id": "41561887276"}
+{"type": "scan", "symbol": "GBPUSD", "candles_processed": 118, "ts": "2026-11-03T01:47:54.442186+00:00", "run_id": "41561887276"}
+{"type": "scan", "symbol": "USDJPY", "candles_processed": 59, "ts": "2026-11-03T01:49:25.358221+00:00", "run_id": "41561887276"}
+{"type": "scan", "symbol": "AUDUSD", "candles_processed": 120, "ts": "2026-11-03T01:50:19.080865+00:00", "run_id": "41561887276"}
+{"type": "scan", "symbol": "USDCHF", "candles_processed": 120, "ts": "2026-11-03T01:51:47.960114+00:00", "run_id": "41561887276"}
+{"type": "feed_error", "symbol": "USDCAD", "detail": "Dukascopy poll failed for USDCAD: every hour in the window errored, last error: Failed to download https://datafeed.dukascopy.com/datafeed/USDCAD/2026/10/03/00h_ticks.bi5: The read operation timed out", "ts": "2026-11-03T01:52:37.919309+00:00", "run_id": "41561887276"}
+{"type": "scan", "symbol": "NZDUSD", "candles_processed": 59, "ts": "2026-11-03T01:53:22.682185+00:00", "run_id": "41561887276"}
+{"type": "decision", "opportunity_id": "S4_USDCHF_M1_20261103T000400_1", "symbol": "USDCHF", "strategy_id": "S4", "verdict": "EXECUTE", "ios": NaN, "itqs": 62.77, "reasons_against": [], "session": "sydney", "ts": "2026-11-03T01:53:22.682570+00:00", "run_id": "41561887276"}
+{"type": "notification_sent", "alert_type": "Approved Trade Opportunity", "ts": "2026-11-03T01:53:23.204887+00:00", "run_id": "41561887276"}
+{"type": "cycle_summary", "workflow_status": "success", "runtime_seconds": 402.03, "symbols_scanned": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF", "NZDUSD"], "candles_processed": 595, "signals_detected": 1, "approved": 1, "rejected": 0, "notifications_sent": 1, "memory_mb": 169.5, "workflow_name": "Telegram Scan (Temporary)", "ts": "2026-11-03T01:53:23.205615+00:00", "run_id": "41561887276"}
