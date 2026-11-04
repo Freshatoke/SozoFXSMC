@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-03",
+  "generated_at": "2026-11-04 00:58:27.890709+00:00",
+  "markets_scanned": [
+    "AUDUSD",
+    "EURUSD",
+    "GBPUSD",
+    "NZDUSD",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+  ],
+  "candles_processed": 1555,
+  "signals_detected": 1,
+  "approved_opportunities": 1,
+  "rejected_opportunities": 0,
+  "open_paper_trades": null,
+  "closed_paper_trades": null,
+  "wins": null,
+  "losses": null,
+  "win_rate": null,
+  "expectancy": null,
+  "profit_factor": null,
+  "highest_ios": NaN,
+  "highest_itqs": 62.77,
+  "best_strategy": "S4",
+  "best_strategy_basis": "most approved opportunities today",
+  "best_symbol": "USDCHF",
+  "most_common_rejection_reason": null,
+  "rejection_reason_breakdown": {},
+  "feed_errors": 12,
+  "no_paper_broker_data": true,
+  "ios_values": [
+    NaN
+  ],
+  "itqs_values": [
+    62.77
+  ],
+  "strategy_counts": {
+    "S4": 1
+  },
+  "symbol_counts": {
+    "USDCHF": 1
+  },
+  "session_counts": {
+    "sydney": 1
+  },
+  "strategy_avg_ios": {
+    "S4": NaN
+  },
+  "symbol_signal_counts": {
+    "USDCHF": 1
+  },
+  "symbol_approval_rate": {
+    "USDCHF": 1.0
+  },
+  "average_ios": NaN,
+  "notifications_sent": 1,
+  "total_scans": 4,
+  "successful_scans": 4,
+  "failed_scans": 0,
+  "scans_without_summary": 0,
+  "expected_scans": 243,
+  "completed_scans": 4,
+  "missed_scans": 239,
+  "average_runtime_seconds": 220.41,
+  "average_memory_mb": 168.3,
+  "provider_uptime_pct": 100.0,
+  "download_failures": 12,
+  "data_quality_warnings": 0,
+  "reconnect_count": null
+}
